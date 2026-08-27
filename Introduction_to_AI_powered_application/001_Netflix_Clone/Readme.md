@@ -49,7 +49,7 @@ Instead of hardcoding movie information, the application fetches real-time movie
 
 - **`src/components/`**: Modular presentation components including Banner, MovieRow, Navbar, MovieCard, and VideoModal.
 - **`src/pages/`**: View containers mapped to dynamic routes including Home, MovieDetail, and SearchResults.
-- **`src/services/`**: API helper configurations, Axios base instances, and TMDB endpoint paths.
+- **`src/store/`**: Authentication files are executed here for signup and login services.
 
 ---
 
