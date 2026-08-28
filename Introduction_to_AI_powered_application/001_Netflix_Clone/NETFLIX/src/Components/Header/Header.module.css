@@ -1,0 +1,164 @@
+
+
+.header{
+    background:transparent;
+    padding:16px 0;
+    position:fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    z-index:1000;
+    background-color: black;
+    backdrop-filter: blur(3px); 
+    
+}
+.container{
+    display:flex;
+    align-items: center;
+    justify-content:space-between;
+    max-width:1920px;
+    padding:0 40px;
+    margin:0 auto;
+    gap:40px;
+
+}
+.logo{
+    flex-shrink: 0;
+    width:100px;
+    height:30px;
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+}
+
+.logo:hover{
+    opacity: 0.8;
+}
+.nav{
+    display:flex;
+    gap:20px;
+    flex:1;
+    align-items: center;
+}
+.navLink{
+    color:white;
+    text-decoration:none;
+    font-size:14px;
+    font-weight: 500;
+    transition:color 0.3s ease;
+    white-space: nowrap;
+}
+.navLink:hover{
+    color:rgb(146, 153, 159)
+}
+.rightSection{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    flex-shrink: 0;
+}
+.searchContainer{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.searchButton{
+    background: none;
+    border: none;
+    color:aliceblue;
+    cursor: pointer;
+    padding: 4px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+.searchButton:hover{
+    color:rgb(123, 136, 148)
+}
+.searchInput{
+    margin-top:4px;
+    padding:8px 16px;
+    border-radius:4px;
+    border:1px solid rgb(72, 85, 97);
+    transition: all 0.3s ease;
+}
+.iconButton{
+    position:relative;
+    background: none;
+    border:none;
+    color: aliceblue;
+    cursor:pointer;
+    padding:4px;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+    transition:color 0.3s ease;
+}
+.iconButton:hover{
+    color:rgb(178, 186, 193)
+}
+.notificationBadge{
+    position:absolute;
+    top:2px;
+    right:2px;
+    width:14px;
+    height:14px;
+    background-color: #e50914;
+    border-radius: 50%;
+}
+.profileContainer{
+    position:relative;
+}
+.profileButton{
+    background: none;
+    border:none;
+    color: aliceblue;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    transition:all 0.3s ease;
+    gap:8px;
+    padding:4px 8px;
+    border-radius:4px;
+}
+
+.profileButton:hover{
+    background-color: rgba(25, 255, 255, 0.1);
+}
+.profileDropdown{
+    position:absolute;
+    top:100%;
+    right:0;
+    background-color: rgb(25, 25, 25);
+    border-radius:4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    margin-top:8px;
+    min-width:160px;
+    z-index:1001;
+}
+.dropdownItem{
+    display:block;
+    padding:8px 16px;
+    color:white;
+    text-decoration:none;
+    font-size:14px;
+    transition:background-color 0.3s ease;
+}
+.profileMenuDevider{
+    height:0;
+    background-color: rgb(72, 85, 97);
+    margin:2px 0;
+}
+.profileAvator{
+    width:32px;
+    height:32px;
+    background-color: rgb(49, 56, 56);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: aliceblue;
+    font-size: 16px;
+}
