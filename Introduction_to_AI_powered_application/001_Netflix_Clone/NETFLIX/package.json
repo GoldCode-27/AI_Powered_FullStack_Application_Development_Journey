@@ -13,8 +13,10 @@
     "lucide-react": "^1.34.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-icons": "^5.7.0",
     "react-lucid": "^0.0.1",
-    "react-router-dom": "^7.18.2"
+    "react-router-dom": "^7.18.2",
+    "swiper": "^14.2.0"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",

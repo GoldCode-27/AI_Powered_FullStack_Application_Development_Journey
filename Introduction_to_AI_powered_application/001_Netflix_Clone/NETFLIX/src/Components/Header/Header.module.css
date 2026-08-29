@@ -8,9 +8,13 @@
     left:0;
     width: 100%;
     z-index:1000;
-    background-color: black;
+    /* background-color: black; */
     backdrop-filter: blur(3px); 
+    transition: background-color 0.4s ease;
     
+}
+.scrolled{
+    background-color: black;
 }
 .container{
     display:flex;
@@ -161,4 +165,27 @@
     justify-content: center;
     color: aliceblue;
     font-size: 16px;
+}
+/*Responsive*/
+@media(max-width:768px){
+
+.container{
+    padding: 0 16px;
+    gap:16px;
+}
+.nav{
+    display: none;
+}
+.logo{
+    width:80px;
+}
+.searchInput{
+    width: 120px;
+}
+.rightSection{
+    gap: 16px;
+}
+}
+@media(max-width:480){
+
 }
