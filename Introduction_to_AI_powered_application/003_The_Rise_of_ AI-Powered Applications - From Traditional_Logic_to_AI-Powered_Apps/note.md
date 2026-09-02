@@ -80,18 +80,4 @@ Quick-reference definitions for: Semantic search, Embedding/Vector, LangChain, V
 
 ---
 
-### 💡 Suggested repo layout
-
-```
-ai-powered-apps/
-├── README.md                       ← this file (index + Big Idea)
-├── 01-traditional-vs-ai-apps.md
-├── 02-why-ai-apps-now.md
-├── 03-real-world-examples.md
-├── 04-ai-coding-tutorial.md
-├── glossary.md
-└── assets/
-    └── diagrams/                    ← traditional vs AI-app flow diagrams, DX stack diagram
-```
-
 **Rule for developers:** Never accept code you cannot explain in your own words. AI is your co-pilot, not the captain — like GPS, it's great until it fails and you don't know how to read the map yourself.
