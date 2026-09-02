@@ -1,6 +1,7 @@
  
- import { createConversationService } from '../service/chat.service.js';
- //function to handle errors
+ import { createConversationService, getRecentConversationsRows } from '../service/chat.service.js';
+
+ //function to handle creating a new conversation
  export async function createConversationController(req, res) {
     
    try {
@@ -17,10 +18,16 @@
  }
 }
 
-//functiom to handle errors
+//functiom to handle fetching conversations
 export async function getConversationsController(req, res) {
    try {
-    res.send("Fetching chat conversations...");
+    const result = await getRecentConversationsRows(100);
+    res.status(200).json({ 
+        success: true,
+        message: 'Conversations fetched successfully',
+        data: result
+    });
+    
     }catch (err) {
      throw (err);
  }
