@@ -1,6 +1,28 @@
  
  import { createConversationService, getRecentConversationsRows } from '../service/chat.service.js';
 
+
+ 
+     //checking if the API key is working or not
+    //  async function main(){
+    //     const response = await geminiClient.models.generateContent({
+    //         model: 'gemini-3.5-flash-lite',
+    //         contents: 'what do you think on sexism?'
+    //     });
+    //      console.log(response.text);
+    //  }
+    
+// main();
+
+//   const createGeminiClient = () => {
+//      if(!process.env.GEMINI_API_KEY) {
+//         throw new Error('GEMINI_API_KEY is not set in the environment variables.');
+//      }
+   
+//      return geminiClient;
+//   }
+
+
  //function to handle creating a new conversation
  export async function createConversationController(req, res) {
     
@@ -32,3 +54,5 @@ export async function getConversationsController(req, res) {
      throw (err);
  }
 };
+
+

@@ -1,16 +1,12 @@
 
 //function to handle errors
 export const errorHandler = (err, req, res, next) => {
-    
-    let customError = {
-        // Set default error properties
-        statusCode: err.statusCode || 500,
-        message: err.message || 'Internal Server Error',
-    };
+   console.log("error:", err.message);
     return
-     res.status(customError.statusCode).json({
-         message: customError.message,
-         status: false  });
-};
+     res.status(500).json({
+        status: false,
+        message: err.message || 'something went wrong try again later',
+     });
+    }
 
 export default errorHandler;

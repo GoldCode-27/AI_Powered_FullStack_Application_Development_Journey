@@ -1,0 +1,5 @@
+-Select history 100/50
+-Save new question
+
+-Prompt + context
+-Model request 

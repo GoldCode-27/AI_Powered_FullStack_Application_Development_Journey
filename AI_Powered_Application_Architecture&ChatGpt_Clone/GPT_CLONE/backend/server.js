@@ -9,16 +9,6 @@ import errorHandler from'./src/middleware/error.handler.js'
         app.use('/api', mainRouter);
 
         app.use(errorHandler); // Use the error handler middleware
-        
-// // Endpoint to create a new chat conversation
-// app.post("/api/chat/conversation", async (req, res) => {
-//     res.send("Creating a new chat conversation...");
-// });
-
-// // Endpoint to fetch chat conversations
-// app.get("/api/chat/conversations", async (req, res) => {
-//     res.send("Fetching chat conversations...");
-// });
 
 
 async function startServer() {
