@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Rise of AI-Powered Applications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6F8;
+    --panel:#0F1430;
+    --panel-2:#161C3E;
+    --ink:#12172B;
+    --ink-soft:#4B5170;
+    --line:#DADEEA;
+    --card:#FFFFFF;
+    --det:#3B6EA5;      /* deterministic / traditional — blue, sharp */
+    --det-soft:#DCE7F2;
+    --prob:#D98A25;     /* probabilistic / AI — amber, soft */
+    --prob-soft:#F6E6CC;
+    --code-bg:#0D1120;
+    --code-ink:#D9DEF2;
+    --serif-body: 'IBM Plex Sans', sans-serif;
+    --display: 'Space Grotesk', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--serif-body);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- layout shell ---------- */
+  .shell{display:grid;grid-template-columns:280px 1fr;min-height:100vh;}
+
+  /* ---------- sidebar ---------- */
+  .sidebar{
+    background:var(--panel);
+    color:#C7CCE6;
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+    padding:28px 0 40px;
+    border-right:1px solid #060915;
+  }
+  .brand{
+    padding:0 24px 20px;
+    border-bottom:1px solid #262c52;
+    margin-bottom:18px;
+  }
+  .brand .mark{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+    color:var(--prob);text-transform:uppercase;margin-bottom:10px;
+  }
+  .brand .mark .sq{width:8px;height:8px;background:var(--det);display:inline-block;}
+  .brand .mark .ci{width:8px;height:8px;background:var(--prob);border-radius:50%;display:inline-block;filter:blur(.2px);}
+  .brand h1{
+    font-family:var(--display);font-size:19px;line-height:1.3;margin:0;color:#F2F3FA;font-weight:600;
+  }
+  .brand p{margin:8px 0 0;font-size:12.5px;color:#8A90B8;}
+
+  nav.toc{padding:0 12px;}
+  nav.toc .group{margin-bottom:4px;}
+  nav.toc a{
+    display:flex;gap:10px;align-items:flex-start;
+    padding:9px 12px;border-radius:6px;
+    color:#AEB4D6;text-decoration:none;font-size:13.5px;
+    transition:background .15s ease, color .15s ease;
+  }
+  nav.toc a:hover{background:#1B2150;color:#fff;}
+  nav.toc a.active{background:#20265A;color:#fff;}
+  nav.toc a.active .num{color:var(--prob);}
+  nav.toc .num{
+    font-family:var(--mono);font-size:11px;color:#5B6190;flex-shrink:0;padding-top:2px;
+  }
+  nav.toc .sub a{padding-left:34px;font-size:12.5px;color:#9096BC;}
+  nav.toc .sub{margin-bottom:10px;}
+
+  .sidebar-foot{
+    padding:18px 24px 0;margin-top:18px;border-top:1px solid #262c52;
+    font-family:var(--mono);font-size:10.5px;color:#5B6190;letter-spacing:.04em;
+  }
+
+  /* ---------- main ---------- */
+  main{padding:64px 56px 120px;max-width:880px;}
+  .kicker{
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-soft);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+  }
+  .kicker .line{height:1px;width:36px;background:var(--line);}
+  h1.hero{
+    font-family:var(--display);font-size:44px;line-height:1.12;margin:0 0 20px;font-weight:700;
+    letter-spacing:-.01em;
+  }
+  .lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin-bottom:36px;}
+
+  .bigidea{
+    background:var(--panel);color:#EDEFFB;border-radius:10px;padding:26px 28px;margin-bottom:56px;
+    position:relative;overflow:hidden;
+  }
+  .bigidea::before{
+    content:"";position:absolute;right:-40px;top:-40px;width:140px;height:140px;
+    border-radius:50%;background:radial-gradient(circle,rgba(217,138,37,.35),transparent 70%);
+  }
+  .bigidea .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--prob);text-transform:uppercase;margin-bottom:10px;}
+  .bigidea p{margin:0;font-size:16.5px;line-height:1.6;position:relative;}
+  .bigidea strong{color:#fff;}
+
+  section{margin-bottom:68px;scroll-margin-top:32px;}
+  section.subsection{margin-bottom:44px;scroll-margin-top:32px;}
+
+  .section-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;}
+  .section-head .n{
+    font-family:var(--display);font-size:15px;color:#fff;background:var(--det);
+    padding:3px 9px;border-radius:4px;font-weight:600;
+  }
+  h2{font-family:var(--display);font-size:28px;margin:0;font-weight:600;letter-spacing:-.01em;}
+  h3{font-family:var(--display);font-size:19px;margin:0 0 12px;font-weight:600;color:var(--ink);}
+  .subhead-rule{height:1px;background:var(--line);margin:18px 0 26px;}
+
+  p{margin:0 0 16px;color:#2A2F45;}
+  .sub-label{
+    display:inline-block;font-family:var(--mono);font-size:11px;color:var(--ink-soft);
+    background:#EDEFF6;border:1px solid var(--line);padding:2px 8px;border-radius:4px;margin-bottom:10px;
+  }
+
+  /* duality tags */
+  .tag-det, .tag-prob{
+    display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:4px;font-weight:600;
+  }
+  .tag-det{background:var(--det-soft);color:var(--det);}
+  .tag-prob{background:var(--prob-soft);color:var(--prob);}
+  .tag-det .dot{width:7px;height:7px;background:var(--det);display:inline-block;}
+  .tag-prob .dot{width:7px;height:7px;background:var(--prob);border-radius:50%;display:inline-block;}
+
+  /* comparison table */
+  table{width:100%;border-collapse:collapse;margin:18px 0 8px;font-size:14.5px;background:var(--card);
+    border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  thead th{
+    background:var(--panel);color:#EDEFFB;text-align:left;padding:12px 16px;
+    font-family:var(--display);font-weight:600;font-size:13.5px;
+  }
+  thead th:first-child{color:var(--det);}
+  thead th:nth-child(2){color:#8FB2D8;}
+  thead th:last-child{color:var(--prob);}
+  tbody td{padding:12px 16px;border-top:1px solid var(--line);vertical-align:top;color:#2A2F45;}
+  tbody td:first-child{font-weight:600;color:var(--ink);}
+  tbody tr:nth-child(even) td{background:#FAFAFC;}
+
+  /* code blocks */
+  pre{
+    background:var(--code-bg);color:var(--code-ink);font-family:var(--mono);font-size:13px;
+    padding:18px 20px;border-radius:8px;overflow-x:auto;margin:18px 0;line-height:1.6;
+    border:1px solid #232848;
+  }
+  code{font-family:var(--mono);}
+  p code, li code{background:#EDEFF6;color:#B4590F;padding:1px 6px;border-radius:4px;font-size:.9em;}
+
+  /* callout cards */
+  .callout{
+    border-left:3px solid var(--det);background:var(--det-soft);border-radius:0 8px 8px 0;
+    padding:16px 20px;margin:18px 0;
+  }
+  .callout.warn{border-left-color:var(--prob);background:var(--prob-soft);}
+  .callout .ctitle{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    margin-bottom:6px;color:var(--det);font-weight:600;}
+  .callout.warn .ctitle{color:var(--prob);}
+  .callout p{margin:0;font-size:14.5px;color:var(--ink);}
+
+  ul{margin:0 0 16px;padding-left:22px;color:#2A2F45;}
+  li{margin-bottom:6px;}
+  li strong{color:var(--ink);}
+
+  /* duo cards for 1.1 / 1.2 style contrast */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+  @media (max-width: 720px){.duo{grid-template-columns:1fr;}}
+  .duo .card{border-radius:8px;padding:18px 20px;border:1px solid var(--line);background:var(--card);}
+  .duo .card.det{border-top:3px solid var(--det);}
+  .duo .card.prob{border-top:3px solid var(--prob);}
+  .duo h4{font-family:var(--display);font-size:15px;margin:0 0 10px;}
+
+  .example-row{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0;}
+  .example-row .box{flex:1;min-width:200px;background:#FAFAFC;border:1px dashed var(--line);border-radius:8px;padding:14px 16px;font-size:13.5px;}
+  .example-row .box .k{font-family:var(--mono);font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+
+  .prompt-compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:18px 0;}
+  @media (max-width: 720px){.prompt-compare{grid-template-columns:1fr;}}
+  .prompt-compare .col{padding:16px 18px;}
+  .prompt-compare .weak{background:#FBEFEA;border-right:1px solid var(--line);}
+  .prompt-compare .better{background:#EBF5EC;}
+  .prompt-compare .label{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .prompt-compare .weak .label{color:#B4432B;}
+  .prompt-compare .better .label{color:#2E7D46;}
+  .prompt-compare p{margin:0;font-size:14px;}
+
+  .analogy{
+    font-family:var(--display);font-style:normal;font-size:17px;color:var(--ink);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:20px 0;margin:26px 0;
+  }
+  .analogy span{color:var(--prob);}
+
+  footer.page-end{
+    margin-top:80px;padding-top:24px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  }
+
+  /* mobile */
+  .menu-btn{display:none;}
+  @media (max-width: 900px){
+    .shell{grid-template-columns:1fr;}
+    .sidebar{
+      position:fixed;left:0;top:0;bottom:0;width:270px;z-index:40;
+      transform:translateX(-100%);transition:transform .25s ease;
+    }
+    .sidebar.open{transform:translateX(0);box-shadow:0 0 40px rgba(0,0,0,.4);}
+    main{padding:80px 22px 100px;}
+    h1.hero{font-size:32px;}
+    .menu-btn{
+      display:flex;position:fixed;top:16px;left:16px;z-index:50;
+      align-items:center;gap:8px;background:var(--panel);color:#fff;border:none;
+      padding:10px 14px;border-radius:7px;font-family:var(--mono);font-size:12px;cursor:pointer;
+    }
+    .overlay{display:none;position:fixed;inset:0;background:rgba(10,12,26,.5);z-index:35;}
+    .overlay.show{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<button class="menu-btn" id="menuBtn">☰ Menu</button>
+<div class="overlay" id="overlay"></div>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="mark"><span class="sq"></span><span class="ci"></span> Reading Guide</div>
+      <h1>The Rise of AI-Powered Applications</h1>
+      <p>Rules vs. meaning — a developer's field guide</p>
+    </div>
+    <nav class="toc">
+      <div class="group"><a href="#top"><span class="num">00</span><span>Big idea</span></a></div>
+
+      <div class="group"><a href="#s1"><span class="num">01</span><span>Traditional vs AI-Powered</span></a></div>
+      <div class="sub">
+        <a href="#s1-1">1.1 Traditional: keyword logic</a>
+        <a href="#s1-2">1.2 AI-powered: meaning logic</a>
+      </div>
+
+      <div class="group"><a href="#s2"><span class="num">02</span><span>Why AI Apps Are Emerging Now</span></a></div>
+      <div class="sub">
+        <a href="#s2-1">2.1 Model-as-a-service</a>
+        <a href="#s2-2">2.2 The hardware explosion</a>
+        <a href="#s2-3">2.3 Developer tooling</a>
+      </div>
+
+      <div class="group"><a href="#s3"><span class="num">03</span><span>Real-World Applications</span></a></div>
+      <div class="sub">
+        <a href="#s3-1">3.1 Code assistants</a>
+        <a href="#s3-2">3.2 Recommendation systems</a>
+        <a href="#s3-3">3.3 Ride-hailing pricing</a>
+      </div>
+
+      <div class="group"><a href="#s4"><span class="num">04</span><span>Using Your AI Superpowers</span></a></div>
+      <div class="sub">
+        <a href="#s4-1">4.1 Autocomplete</a>
+        <a href="#s4-2">4.2 Inline chat</a>
+        <a href="#s4-3">4.3 Sidebar chat</a>
+        <a href="#s4-4">4.4 The @ symbol</a>
+        <a href="#s4-5">4.5 Under the hood</a>
+      </div>
+    </nav>
+    <div class="sidebar-foot">■ deterministic &nbsp; ● probabilistic</div>
+  </aside>
+
+  <main id="top">
+    <div class="kicker"><span class="line"></span> Field guide · developer notes</div>
+    <h1 class="hero">The Rise of<br>AI-Powered Applications</h1>
+    <p class="lede">A working map of how model intelligence gets layered onto ordinary software — where it helps, where it breaks, and how to use it without losing the thread of your own code.</p>
+
+    <div class="bigidea">
+      <div class="tag">Big idea</div>
+      <p>AI-powered applications are traditional software applications <strong>plus model intelligence</strong>. The AI does not replace the app; it adds a new capability layer for meaning, prediction, generation, and personalization.</p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section id="s1">
+      <div class="section-head"><span class="n">01</span><h2>Traditional vs AI-Powered Applications</h2></div>
+      <div class="subhead-rule"></div>
+      <p>Traditional applications usually follow explicit rules. They are <strong>deterministic</strong>: the same input normally produces the same output because the developer wrote the logic directly. AI-powered applications add a probabilistic layer — they can handle meaning, similarity, prediction, and natural language, but their behavior may be less exact and must be controlled carefully.</p>
+
+      <table>
+        <thead>
+          <tr><th>Feature</th><th>Traditional app</th><th>AI-powered app</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Core logic</td><td>Rules written directly by developers.</td><td>Rules plus model predictions or generated responses.</td></tr>
+          <tr><td>Search behavior</td><td>Exact keyword matching.</td><td>Meaning-based or semantic matching.</td></tr>
+          <tr><td>Output style</td><td>Usually fixed and predictable.</td><td>Can vary depending on model, prompt, and settings.</td></tr>
+          <tr><td>Best for</td><td>Forms, payments, CRUD apps, permissions, exact workflows.</td><td>Chat, recommendations, summarization, meaning search, generation.</td></tr>
+          <tr><td>Main risk</td><td>Too rigid; cannot understand user intent.</td><td>Can hallucinate or give inconsistent results if not controlled.</td></tr>
+        </tbody>
+      </table>
+
+      <section class="subsection" id="s1-1">
+        <span class="tag-det"><span class="dot"></span>Deterministic</span>
+        <h3 style="margin-top:12px;">1.1 Traditional Forum: Keyword Logic</h3>
+        <p>Imagine a forum such as an education Q&A board. A traditional search feature might look for the exact word in the title or body. If a user searches for <code>React</code>, the app returns posts containing <code>React</code>. Useful — but it misses meaning.</p>
+        <pre><code>SELECT * FROM questions
+WHERE title LIKE '%React%' OR body LIKE '%React%';</code></pre>
+        <div class="duo">
+          <div class="card det">
+            <h4>Strength</h4>
+            <p style="margin:0;font-size:14px;">Simple, fast, easy to understand, and good when users know the exact words.</p>
+          </div>
+          <div class="card det">
+            <h4>Weakness</h4>
+            <p style="margin:0;font-size:14px;">Fails when users describe the same idea with different words.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <div class="ctitle">Example failure</div>
+          <p>A user searches for <em>"frontend library,"</em> but the post says <em>React</em>. The exact keyword search may return nothing.</p>
+        </div>
+      </section>
+
+      <section class="subsection" id="s1-2">
+        <span class="tag-prob"><span class="dot"></span>Probabilistic</span>
+        <h3 style="margin-top:12px;">1.2 AI-Powered Forum: Meaning Logic</h3>
+        <p>An AI-powered search feature can understand that React is a frontend library, even if the phrase <em>"frontend library"</em> never appears in the post. This is the idea behind <strong>semantic search</strong> — instead of matching letters, the system compares meaning.</p>
+        <div class="example-row">
+          <div class="box"><div class="k">User search</div>"frontend library"</div>
+          <div class="box"><div class="k">AI understanding</div>related to React, Vue, Angular, UI components</div>
+          <div class="box"><div class="k">Search method</div>embed query → compare vectors → rank by similarity</div>
+        </div>
+        <div class="callout warn">
+          <div class="ctitle">Key lesson</div>
+          <p>AI-powered does not mean replacing SQL or normal code. It means adding meaning-aware features where exact rules aren't enough.</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="s2">
+      <div class="section-head"><span class="n">02</span><h2>Why AI Apps Are Emerging Now</h2></div>
+      <div class="subhead-rule"></div>
+      <p>AI research has existed for decades, but AI-powered apps are exploding today for three main reasons: model-as-a-service APIs, faster hardware, and better developer tools.</p>
+
+      <section class="subsection" id="s2-1">
+        <h3>2.1 Model-as-a-Service (APIs)</h3>
+        <p>In the past, building an AI system required deep math knowledge, a PhD-level understanding of machine learning, and access to very powerful hardware. Today, companies like OpenAI, Google, and Anthropic have already done the heavy lifting — they train the huge models and host them on their servers. As developers, we call a simple API: send a text prompt, receive a text response. Calling an AI model is now as easy as calling a weather API.</p>
+        <div class="duo">
+          <div class="card det">
+            <h4>Normal API mindset</h4>
+            <pre style="margin:0;"><code>Frontend → Backend → External API → Response</code></pre>
+          </div>
+          <div class="card prob">
+            <h4>AI API mindset</h4>
+            <pre style="margin:0;"><code>Frontend → Backend → LLM API → Generated response</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="subsection" id="s2-2">
+        <h3>2.2 The Hardware Explosion (GPUs)</h3>
+        <p>Modern AI requires a huge amount of mathematical computation. GPUs perform many calculations in parallel, which made deep learning and large-scale inference far more practical than in earlier decades. Companies like NVIDIA have built chips capable of billions of parallel operations.</p>
+        <ul>
+          <li>Train large models faster.</li>
+          <li>Run big models in seconds, not hours.</li>
+        </ul>
+        <p>Without this hardware progress, real-time AI apps — chatbots, coding assistants, image generators — would be too slow or too expensive to use in the moment.</p>
+      </section>
+
+      <section class="subsection" id="s2-3">
+        <h3>2.3 Developer Tooling Ecosystem (DX)</h3>
+        <p>Ten to fifteen years ago, building a web app meant writing raw HTML, CSS, and manual DOM code — until React, Angular, and Vue made it easier. The same revolution is happening in AI development now.</p>
+
+        <div class="callout">
+          <div class="ctitle">LangChain — the glue</div>
+          <p>A typical AI app needs to read user input, look up data, prepare a prompt, call an LLM, and format the output. Doing this by hand gets messy fast. LangChain chains these steps together clearly and reusably, similar to middleware in frameworks like Express.</p>
+        </div>
+        <div class="callout">
+          <div class="ctitle">Vector databases — long-term memory</div>
+          <p>Traditional databases like MySQL work well when you know exactly what you're looking for. AI often needs to search by <em>meaning</em> — "find documents related to sadness," or "find questions similar to this one." Vector databases store documents as vectors so you can retrieve the most relevant items from millions of documents.</p>
+        </div>
+        <div class="callout">
+          <div class="ctitle">Vercel AI SDK — the UI bridge</div>
+          <p>AI responses can take a few seconds to generate. A bare loading spinner feels slow. The Vercel AI SDK supports streaming, so text appears on screen piece by piece — like someone typing — making the experience feel responsive even while the model is still thinking.</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="s3">
+      <div class="section-head"><span class="n">03</span><h2>Real-World AI-Powered Applications</h2></div>
+      <div class="subhead-rule"></div>
+      <p>We already interact with AI-powered applications every day, often without realizing it.</p>
+
+      <section class="subsection" id="s3-1">
+        <h3>3.1 Code Assistants</h3>
+        <p>Code has structure and patterns. If a model sees your current file, imports, function names, and comments, it can often predict what code should come next. That doesn't mean the code is always correct — but it can speed up boilerplate and debugging.</p>
+        <pre><code>// Developer types:
+function calculateTax(amount, rate) {
+// AI may suggest:
+return amount * rate;
+}</code></pre>
+        <ul>
+          <li><strong>Good uses:</strong> boilerplate, small helper functions, CSS styling, refactoring, test cases, explaining errors.</li>
+          <li><strong>Risky uses:</strong> security logic, payment logic, authentication, complex business rules, code you don't understand.</li>
+          <li><strong>Best habit:</strong> ask the AI to explain its code after generating it, then run and test it yourself.</li>
+        </ul>
+      </section>
+
+      <section class="subsection" id="s3-2">
+        <h3>3.2 Social Media and Recommendation Systems</h3>
+        <p>When you find yourself scrolling for hours, that's the result of powerful recommendation engines. These systems observe your behavior — what you watch to the end, watch twice, like, share, or skip quickly. Watch a few cooking videos, and the system learns you're interested in food and starts showing you more. Over time, your feed becomes highly personalized to keep you engaged — deep learning-based recommendation at work.</p>
+      </section>
+
+      <section class="subsection" id="s3-3">
+        <h3>3.3 Ride-Hailing: Pricing & Routing</h3>
+        <p>Ride-hailing apps use prediction to estimate price and travel time. A model may weigh weather, demand, nearby drivers, traffic, distance, and time of day. It's a different shape of AI from a chatbot, but it's still AI-powered decision-making — the system predicts outcomes from data.</p>
+        <ul>
+          <li><strong>Pricing:</strong> estimate cost from distance, demand, driver availability, and market rules.</li>
+          <li><strong>Routing:</strong> suggest efficient paths using traffic predictions.</li>
+          <li><strong>Matching:</strong> connect riders and drivers by location and availability.</li>
+        </ul>
+      </section>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section id="s4">
+      <div class="section-head"><span class="n">04</span><h2>AI Coding Tutorial: Using Your Superpowers</h2></div>
+      <div class="subhead-rule"></div>
+      <p>AI code editors can make developers much faster — but only when used with understanding. They're best viewed as assistants that draft, explain, refactor, and debug, not replacements for foundational coding skill.</p>
+
+      <table>
+        <thead><tr><th>Mode</th><th>Best use case</th><th>How to use it well</th></tr></thead>
+        <tbody>
+          <tr><td>Autocomplete / ghost text</td><td>Boilerplate, repeated patterns, simple functions.</td><td>Start typing clearly named functions; accept only suggestions you understand.</td></tr>
+          <tr><td>Inline chat</td><td>Refactor selected code or fix a small block.</td><td>Highlight a specific section and give a focused instruction.</td></tr>
+          <tr><td>Sidebar chat</td><td>Ask larger questions, debug errors, discuss architecture.</td><td>Paste the error and relevant code; ask for explanation before the fix.</td></tr>
+          <tr><td>Context awareness with @</td><td>Make the AI inspect other files.</td><td>Reference exact files so the AI can compare styles and dependencies.</td></tr>
+        </tbody>
+      </table>
+
+      <section class="subsection" id="s4-1">
+        <h3>4.1 Mode 1: Autocomplete</h3>
+        <p>The fastest mode. It works like intelligent ghost text — the editor predicts what you probably want to type next based on the current file and surrounding code.</p>
+        <div class="example-row">
+          <div class="box"><div class="k">Type</div><code>function calculateTax</code></div>
+          <div class="box"><div class="k">Possible ghost text</div><code>(amount, rate) { return amount * rate; }</code></div>
+        </div>
+        <ul>
+          <li>Use it for repeated patterns, object shapes, small helper functions, and CSS rules.</li>
+          <li>Avoid pressing Tab repeatedly without reading — that creates code you don't understand.</li>
+        </ul>
+      </section>
+
+      <section class="subsection" id="s4-2">
+        <h3>4.2 Mode 2: Inline Chat</h3>
+        <p>Best when you already have code and want to change a specific section — highlight the block, ask for a focused edit. Useful for refactoring, comments, style conversion, or fixing a small bug.</p>
+        <div class="prompt-compare">
+          <div class="col weak"><div class="label">Weak instruction</div><p>Fix this. / Make it nice. / Change CSS.</p></div>
+          <div class="col better"><div class="label">Better instruction</div><p>Refactor this if-else block into a switch statement and keep the same behavior. Improve variable names and add comments. Make this movie row scroll horizontally, hide the scrollbar, keep the cards responsive.</p></div>
+        </div>
+      </section>
+
+      <section class="subsection" id="s4-3">
+        <h3>4.3 Mode 3: Sidebar Chat</h3>
+        <p>Useful for bigger questions. It behaves like a teacher or debugging partner — explain an error, compare two approaches, design a component, or walk through a problem step by step.</p>
+        <div class="callout">
+          <div class="ctitle">Good sidebar prompt</div>
+          <p>"I am getting a CORS error in my Node backend. Here is my server.js file and the browser error. Explain why it happens first, then show the smallest safe fix."</p>
+        </div>
+        <p style="margin-top:4px;"><strong>Good habit:</strong> ask for explanation before asking for code. If you understand the cause, you can fix similar problems later.</p>
+      </section>
+
+      <section class="subsection" id="s4-4">
+        <h3>4.4 Mode 4: Context Awareness and the @ Symbol</h3>
+        <p>Many AI code editors let you reference files with an <code>@</code> symbol or file picker, so the model can compare code across files instead of guessing from one snippet.</p>
+        <div class="callout warn">
+          <div class="ctitle">Example prompt</div>
+          <p>"Does @Login.jsx follow the same layout and button style as @Signup.jsx? If not, update Login.jsx to match the style but do not change the form logic."</p>
+        </div>
+        <ul>
+          <li>Use file references for component consistency, shared styling, or imports.</li>
+          <li>Give clear boundaries: tell the AI what it can change and what it must not.</li>
+          <li>After changes, run the project and check the UI yourself.</li>
+        </ul>
+      </section>
+
+      <section class="subsection" id="s4-5">
+        <h3>4.5 How AI Code Editors Work Under the Hood</h3>
+        <p>These editors are AI-powered apps themselves. When you type or select code, the editor gathers relevant context — your current file and possibly related files — sends it as a prompt to an LLM, receives predicted next tokens, and displays them as suggestions or ghost text. The "magic" is clever use of an API plus good context handling.</p>
+
+        <div class="analogy">GPS is great for driving. But if GPS fails and you don't know how to read a map, <span>you are stuck.</span></div>
+
+        <div class="callout warn">
+          <div class="ctitle">The co-pilot trap</div>
+          <p>Because it's so easy to accept suggestions with a single key press, you might press Tab again and again without really reading the code being inserted. Over time you could end up with a large codebase that works but that you do not truly understand — a real problem when something breaks and you don't know how to debug or extend it.</p>
+        </div>
+        <p><strong>The rule:</strong> never accept code you cannot explain in your own words. AI is your co-pilot, not the captain.</p>
+        <p>Editors worth knowing: <strong>Cursor, GitHub Copilot, Windsurf (Codeium), Zed, Supermaven.</strong></p>
+      </section>
+    </section>
+
+    <footer class="page-end">
+      <span>■ deterministic — rules you write</span>
+      <span>● probabilistic — meaning the model infers</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // mobile sidebar toggle
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const overlay = document.getElementById('overlay');
+  function closeMenu(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+  menuBtn?.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('show');
+  });
+  overlay?.addEventListener('click', closeMenu);
+  document.querySelectorAll('nav.toc a').forEach(a => a.addEventListener('click', closeMenu));
+
+  // scrollspy
+  const links = Array.from(document.querySelectorAll('nav.toc a'));
+  const targets = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = '#' + entry.target.id;
+      const link = links.find(a => a.getAttribute('href') === id);
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+  targets.forEach(t => io.observe(t));
+</script>
+</body>
+</html>

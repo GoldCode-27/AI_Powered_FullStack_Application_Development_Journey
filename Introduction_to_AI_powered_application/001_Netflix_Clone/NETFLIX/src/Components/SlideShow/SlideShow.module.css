@@ -1,14 +1,16 @@
-.title{
-    color:whitesmoke;
-}
 .title {
-  color: white;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 18px 0 12px 0;
+  padding-left: 12px;
 }
 
 /* Make wrapper stable */
 .Row {
   position: relative;
 }
+
 
 /* Swiper container */
 .Row :global(.swiper) {
