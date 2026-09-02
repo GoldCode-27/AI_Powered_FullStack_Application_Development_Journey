@@ -1,18 +1,26 @@
 import express from'express'
 import db from'./db/dbConfig.js'
+import mainRouter from'./src/api/main.route.js'
+import errorHandler from'./src/middleware/error.handler.js'
+        const app = express();
 
-const app = express();
         // Middleware to parse JSON requests
         app.use(express.json());
+        app.use('/api', mainRouter);
 
-        // Define your routes here
-        app.post("/api/chat/conversation", async (req, res) => {
-            res.send("Creating a new chat conversation...");
-        });
+        app.use(errorHandler); // Use the error handler middleware
+        
+// // Endpoint to create a new chat conversation
+// app.post("/api/chat/conversation", async (req, res) => {
+//     res.send("Creating a new chat conversation...");
+// });
 
-        app.get("/api/chat/conversations", async (req, res) => {
-            res.send("Fetching chat conversations...");
-        });
+// // Endpoint to fetch chat conversations
+// app.get("/api/chat/conversations", async (req, res) => {
+//     res.send("Fetching chat conversations...");
+// });
+
+
 async function startServer() {
     try {
         // Test the database connection
