@@ -9,7 +9,7 @@ export default function MessageList({
 }) {
   return (
     <div className={styles.messages}>
-      {conversations.length === 0 ? (
+      {conversations?.length === 0 ? (
         <div className={styles.empty}>What are you working on?</div>
       ) : (
         conversations.map(msg => (
