@@ -109,7 +109,7 @@ export const createConversationService = async (question) => {
 
     const [createAssistantMessageResult] = await db.execute(
       "INSERT INTO conversations (role, content, token_count) VALUES (?, ?, ?)",
-      ["asistant", text, totalTokens],
+      ["assistant", text, totalTokens],
     );
 
     const userConversion = await getMessageById(result.insertId);
@@ -125,4 +125,4 @@ export const createConversationService = async (question) => {
     console.error("Error creating conversation:", error);
     throw error;
   }
-}
+};

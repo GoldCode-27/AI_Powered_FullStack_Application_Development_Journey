@@ -1,10 +1,12 @@
 import express from'express'
 import db from'./db/dbConfig.js'
+import cors from'cors'
 import mainRouter from'./src/api/main.route.js'
 import errorHandler from'./src/middleware/error.handler.js'
         const app = express();
-
+        
         // Middleware to parse JSON requests
+        app.use(cors()); // Enable CORS for all routes
         app.use(express.json());
         app.use('/api', mainRouter);
 
