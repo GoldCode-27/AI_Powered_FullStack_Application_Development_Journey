@@ -1,5 +1,7 @@
  
- import { createConversationService, getRecentConversationsRows, deleteConversationService } from '../service/chat.service.js';
+ import { createConversationService,
+        getRecentConversationsRows,
+        deleteConversationService } from '../service/chat.service.js';
 
 
  
@@ -58,7 +60,7 @@ export const getConversationsController = () => async (req, res) => {
 // function to delete a conversation
 export const deleteConversationController = async (req, res) => {
   try {
-    //catching id fron the request body
+    //catching id from the request body
     const { id } = req.params;
 
     const result = await deleteConversationService(id);
