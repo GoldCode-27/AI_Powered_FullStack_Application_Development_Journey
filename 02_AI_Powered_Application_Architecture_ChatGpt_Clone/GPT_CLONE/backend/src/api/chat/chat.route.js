@@ -5,7 +5,7 @@ import express from "express";
 import {
   createConversationController,
   getConversationsController,
-  deleteConversationController
+  deleteConversationController,
 } from "./controller/chat.controller.js";
 
 //importing the express router
