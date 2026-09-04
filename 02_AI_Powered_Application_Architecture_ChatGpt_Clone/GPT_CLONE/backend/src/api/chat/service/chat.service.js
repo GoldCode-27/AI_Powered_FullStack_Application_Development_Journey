@@ -1,64 +1,72 @@
 import db from "../../../../db/dbConfig.js";
-import { GoogleGenAI } from "@google/genai";
+// importing the Google Generative AI client instead of the Gemini client for bettermodel manipulation and response handling
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// importing the environment variable for the Gemini model name, defaulting to "gemini-3.5-flash-lite" if not set
 const GEMINI_MODEL = process.env.GEMINI_MODEL_NAME || "gemini-3.5-flash-lite";
 
-const geminiClient = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+//creating an instance of the GoogleGenerativeAI client using the GEMINI_API_KEY from environment variables
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// function to fetch recent conversations from the database
-export const getRecentConversationsRows = async (limit = 5) => {
+// function to fetch recent conversations from the database, with a default limit of 10
+export const getRecentConversationsRows = async (limit = 10) => {
   try {
     const normalizedLimit = Number.parseInt(limit, 10);
-    const safeLimit =
-      Number.isNaN(normalizedLimit) || normalizedLimit <= 0
-        ? 20
-        : normalizedLimit;
+    const safeLimit = Number.isNaN(normalizedLimit) || normalizedLimit <= 0 ? 20 : normalizedLimit;
 
     const [rows] = await db.execute(
-      `SELECT id, content,role, created_at FROM conversations ORDER BY id DESC LIMIT ${safeLimit}`,
+      `SELECT id, content, role, created_at FROM conversations ORDER BY id DESC LIMIT ?`,
+      [safeLimit]
     );
 
-    // returning the conversations in reverse order to show the most recent first
     return [...rows].reverse();
   } catch (error) {
-    console.error("Error fetching recent conversations:", error);
+    console.error("Error on fetching recent conversations:", error);
     throw error;
   }
 };
 
-//function to handle generating response from Gemini assistant
+// function to generate an assistant's answer using the Google Generative AI client
 export const generateAssistantAnswer = async ({ history, question }) => {
-  // Format the history for Gemini chat
-  const formattedHistory = (history ?? []).map((row) => ({
-    role: row.role === "assistant" ? "model" : "user",
-    parts: [{ text: row.content }],
-  }));
+  try {
+    
+    //shaping the model behavior
+    const model = genAI.getGenerativeModel({ 
+      model: GEMINI_MODEL,
+      systemInstruction: "You are a specialized Software Development Assistant. Your expertise is strictly limited to programming, software architecture, debugging, and computer science. If a user asks a question unrelated to coding or technology, politely decline and state that you are only designed to assist with software development tasks."
+    });
 
-  //sample history format
-  // [{
-  //     role: 'user',
-  //     parts: [{ text: 'Hello, how are you?' }]
-  // },
-  // {
-  //     role: 'model',
-  //     parts: [{ text: 'I am doing well, thank you for asking!' }]
-  // }
-  // ]
+    //formatting the history on real database for model understandable
+    const formattedHistory = (history ?? []).map((row) => ({
+      role: row.role === "assistant" ? "model" : "user",
+      parts: [{ text: row.content }],
+    }));
 
-  const chat = geminiClient.chats.create({
-    model: GEMINI_MODEL,
+    //starting chat
+    const chat = model.startChat({
+      history: formattedHistory,
+      generationConfig: {
+        temperature: 0.2, // -->creativity
+        maxOutputTokens: 1000, //-->amount of response strings
+      },
+    });
 
-    history: formattedHistory,
-  });
+    //sending a message to the model
+    const result = await chat.sendMessage(question);
+    const response = await result.response;
+    
+    console.log(response);
 
-  const result = await chat.sendMessage({ message: question });
-  console.log("Gemini response:", result.text);
-  return {
-    text: result.text,
-    totalTokens: result.usageMetadata.totalTokenCount,
-  };
+    const text = response.text();
+
+    return {
+      text: text,
+      totalTokens: response.usageMetadata?.totalTokenCount || 0,
+    };
+  } catch (error) {
+    console.error("Gemini AI Error:", error);
+    throw error;
+  }
 };
 
 const getMessageById = async (messageId) => {
@@ -68,58 +76,48 @@ const getMessageById = async (messageId) => {
       [messageId],
     );
 
-    if (!rows[0]) return null; // Return null if no message is found with the given ID
-    return {
-      id: rows[0].id,
-      role: rows[0].role,
-      content: rows[0].content,
-      token_count: rows[0].token_count,
-      created_at: rows[0].created_at,
-    };
-
+    if (!rows[0]) return null;
     return rows[0];
   } catch (error) {
-    console.error("Error fetching message by ID:", error);
+    console.error("Error on fetching message by ID:", error);
     throw error;
   }
 };
 
-// Service functions for chat operations
 export const createConversationService = async (question) => {
   try {
-    // checking validation for question
     if (!question.trim()) {
       const error = new Error("question is required.");
-      error.status = 400; // Bad Request
+      error.status = 400;
       throw error;
     }
 
-    const historyRows = await getRecentConversationsRows(5);
+    const historyRows = await getRecentConversationsRows(10);
 
-    // save to database
+    // 1. የተጠቃሚውን ጥያቄ መመዝገብ
     const [result] = await db.execute(
       'INSERT INTO conversations (content, role) VALUES (?, "user")',
       [question],
     );
 
+    // 2. ከ AI መልስ ማግኘት
     const { text, totalTokens } = await generateAssistantAnswer({
       history: historyRows,
       question,
     });
 
+    // 3. የ AIውን መልስ መመዝገብ
     const [createAssistantMessageResult] = await db.execute(
       "INSERT INTO conversations (role, content, token_count) VALUES (?, ?, ?)",
       ["assistant", text, totalTokens],
     );
 
-    const userConversion = await getMessageById(result.insertId);
-    const assistantConversion = await getMessageById(
-      createAssistantMessageResult.insertId,
-    );
-    // returning the newly created conversation with its ID
+    const userConversation = await getMessageById(result.insertId);
+    const assistantConversation = await getMessageById(createAssistantMessageResult.insertId);
+
     return {
-      assistantConversation: assistantConversion,
-      userConversation: userConversion,
+      assistantConversation,
+      userConversation,
     };
   } catch (error) {
     console.error("Error creating conversation:", error);
