@@ -55,7 +55,7 @@ export const generateAssistantAnswer = async ({ history, question }) => {
     const result = await chat.sendMessage(question);
     const response = await result.response;
     
-      console.log(response);
+      // console.log(response);
 
     const text = response.text();
 
