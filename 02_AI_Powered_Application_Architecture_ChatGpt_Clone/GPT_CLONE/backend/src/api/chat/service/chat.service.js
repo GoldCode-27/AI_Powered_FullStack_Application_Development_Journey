@@ -61,7 +61,7 @@ export const generateAssistantAnswer = async ({ history, question }) => {
 
     return {
       text: text,
-      totalTokens: response.usageMetadata?.totalTokenCount || 0,
+      totalTokens: response.usageMetadata?.totalTokenCount || 0, //-->if AI return the token store here otherwise set zero for database
     };
   } catch (error) {
     console.error("Gemini AI Error:", error);
@@ -110,7 +110,7 @@ export const createConversationService = async (question) => {
     //saving the model's answer
     const [createAssistantMessageResult] = await db.execute(
       "INSERT INTO conversations (role, content, token_count) VALUES (?, ?, ?)",
-      ["assistant", text, totalTokens],
+      ["asistant", text, totalTokens],
     );
 
     const userConversation = await getMessageById(result.insertId);
@@ -122,6 +122,28 @@ export const createConversationService = async (question) => {
     };
   } catch (error) {
     console.error("Error creating conversation:", error);
+    throw error;
+  }
+};
+
+// function deleting a conversation via ID
+export const deleteConversationService = async (id) => {
+  try {
+    const [result] = await db.execute(
+      "DELETE FROM conversations WHERE id = ?",
+      [id]
+    );
+
+    // checking data on that assigned ID
+    if (result.affectedRows === 0) {
+      const error = new Error("Conversation not found.");
+      error.status = 404;
+      throw error;
+    }
+
+    return { message: "Conversation deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting conversation:", error);
     throw error;
   }
 };
