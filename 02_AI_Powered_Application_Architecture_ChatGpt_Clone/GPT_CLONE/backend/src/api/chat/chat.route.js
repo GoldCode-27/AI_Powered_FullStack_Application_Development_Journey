@@ -5,6 +5,7 @@ import express from "express";
 import {
   createConversationController,
   getConversationsController,
+  deleteConversationController
 } from "./controller/chat.controller.js";
 
 //importing the express router
@@ -15,5 +16,8 @@ chatRouter.post("/conversations", createConversationController());
 
 // Endpoint to fetch chat conversations
 chatRouter.get("/conversations", getConversationsController());
+
+// Endpoint to delete chat conversation
+chatRouter.delete("/conversations/:id", deleteConversationController);
 
 export default chatRouter;
