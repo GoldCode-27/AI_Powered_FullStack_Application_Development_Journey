@@ -3,11 +3,11 @@
 
 
  
-     //checking if the API key is working or not
+    //checking if the API key is working or not
     //  async function main(){
     //     const response = await geminiClient.models.generateContent({
     //         model: 'gemini-3.5-flash-lite',
-    //         contents: 'what do you think on sexism?'
+    //         contents: 'what do you think on AI ethics?'
     //     });
     //      console.log(response.text);
     //  }
@@ -24,7 +24,7 @@
 
 
  //function to handle creating a new conversation
- export async function createConversationController(req, res) {
+ export const createConversationController = () => async (req, res) => {
     
    try {
      const { question } = req.body;
@@ -41,7 +41,7 @@
 }
 
 //functiom to handle fetching conversations
-export async function getConversationsController(req, res) {
+export const getConversationsController = () => async (req, res) => {
    try {
     const result = await getRecentConversationsRows(100);
     res.status(200).json({ 
