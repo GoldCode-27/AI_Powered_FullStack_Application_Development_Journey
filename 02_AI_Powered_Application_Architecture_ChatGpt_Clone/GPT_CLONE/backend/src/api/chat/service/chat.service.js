@@ -55,7 +55,7 @@ export const generateAssistantAnswer = async ({ history, question }) => {
     const result = await chat.sendMessage(question);
     const response = await result.response;
     
-    console.log(response);
+      console.log(response);
 
     const text = response.text();
 
@@ -69,6 +69,7 @@ export const generateAssistantAnswer = async ({ history, question }) => {
   }
 };
 
+//
 const getMessageById = async (messageId) => {
   try {
     const [rows] = await db.execute(
@@ -94,19 +95,19 @@ export const createConversationService = async (question) => {
 
     const historyRows = await getRecentConversationsRows(10);
 
-    // 1. የተጠቃሚውን ጥያቄ መመዝገብ
+    //saving user's prompt
     const [result] = await db.execute(
       'INSERT INTO conversations (content, role) VALUES (?, "user")',
       [question],
     );
 
-    // 2. ከ AI መልስ ማግኘት
+    //get answer form model
     const { text, totalTokens } = await generateAssistantAnswer({
       history: historyRows,
       question,
     });
 
-    // 3. የ AIውን መልስ መመዝገብ
+    //saving the model's answer
     const [createAssistantMessageResult] = await db.execute(
       "INSERT INTO conversations (role, content, token_count) VALUES (?, ?, ?)",
       ["assistant", text, totalTokens],
