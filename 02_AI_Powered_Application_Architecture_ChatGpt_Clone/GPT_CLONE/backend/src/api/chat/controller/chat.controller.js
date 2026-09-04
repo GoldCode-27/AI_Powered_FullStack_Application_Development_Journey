@@ -1,5 +1,5 @@
  
- import { createConversationService, getRecentConversationsRows } from '../service/chat.service.js';
+ import { createConversationService, getRecentConversationsRows, deleteConversationService } from '../service/chat.service.js';
 
 
  
@@ -53,4 +53,24 @@ export const getConversationsController = () => async (req, res) => {
     }catch (err) {
      throw (err);
  }
+};
+
+// function to delete a conversation
+export const deleteConversationController = async (req, res) => {
+  try {
+    //catching id fron the request body
+    const { id } = req.params;
+
+    const result = await deleteConversationService(id);
+
+    res.status(200).json({
+      success: true,
+      message: result.message
+    });
+  } catch (err) {
+    res.status(err.status || 500).json({
+      success: false,
+      message: err.message || "Internal Server Error"
+    });
+  }
 };
