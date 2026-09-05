@@ -4,70 +4,51 @@ import {
   deleteConversationService,
 } from "../service/chat.service.js";
 
-//checking if the API key is working or not
-//  async function main(){
-//     const response = await geminiClient.models.generateContent({
-//         model: 'gemini-3.5-flash-lite',
-//         contents: 'what do you think on AI ethics?'
-//     });
-//      console.log(response.text);
-//  }
+const getUserId = (req) =>
+  Number.parseInt(req.headers["x-user-id"], 10) || null;
 
-// main();
-
-//   const createGeminiClient = () => {
-//      if(!process.env.GEMINI_API_KEY) {
-//         throw new Error('GEMINI_API_KEY is not set in the environment variables.');
-//      }
-
-//      return geminiClient;
-//   }
-
-//function to handle creating a new conversation
-export const createConversationController = () => async (req, res) => {
+export const createConversationController = async (req, res) => {
   try {
     const { question } = req.body;
-    const result = await createConversationService(question, req.user.id);
-    res.status(201).json({
-      success: true,
-      message: "Conversation created successfully",
-      data: result,
-    });
-  } catch (err) {
-    throw err;
-  }
-};
+    const userId = getUserId(req);
 
-//function to handle fetching conversations
-export const getConversationsController = () => async (req, res) => {
-  try {
-    const result = await getRecentConversationsRows(100, req.user.id);
-    res.status(200).json({
-      success: true,
-      message: "Conversations fetched successfully",
-      data: result,
-    });
-  } catch (err) {
-    throw err;
-  }
-};
+    if (!userId)
+      return res.status(401).json({
+        success: false,
+        message: "User ID required",
+      });
 
-// function to delete a conversation
-export const deleteConversationController = async (req, res) => {
-  try {
-    //catching id from the request body
-    const { id } = req.params;
-
-    const result = await deleteConversationService(id, req.user.id);
-
-    res.status(200).json({
-      success: true,
-      message: result.message,
-    });
+    const result = await createConversationService(question, userId);
+    res.status(201).json({ success: true, message: "Created", data: result });
   } catch (err) {
     res.status(err.status || 500).json({
       success: false,
-      message: err.message || "Internal Server Error",
+      message: err.message,
     });
+  }
+};
+
+export const getConversationsController = async (req, res) => {
+  try {
+    const userId = getUserId(req);
+    const result = await getRecentConversationsRows(100, userId);
+    res.status(200).json({ success: true, data: result });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+export const deleteConversationController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await deleteConversationService(id, getUserId(req));
+    res.status(200).json({ success: true, message: result.message });
+  } catch (err) {
+    res
+      .status(err.status || 500)
+      .json({ success: false, message: err.message });
   }
 };
