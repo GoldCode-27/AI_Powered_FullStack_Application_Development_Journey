@@ -11,6 +11,18 @@
   flex-direction: row-reverse;
 }
 
+.messageBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  max-width: 80%;
+}
+
+.message.assistant .messageBody {
+  max-width: 100%;
+}
+
 .avatar {
   width: 30px;
   height: 30px;
@@ -35,7 +47,7 @@
   border-radius: 16px;
   font-size: 15px;
   line-height: 1.6;
-  max-width: 80%;
+  max-width: 100%;
   white-space: pre-wrap;
 }
 
@@ -44,6 +56,80 @@
   padding: 0;
   max-width: 100%;
   white-space: normal;
+}
+
+.actions {
+  position: relative;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.message:hover .actions,
+.actions:focus-within {
+  opacity: 1;
+}
+
+.moreButton,
+.deleteButton {
+  border: 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.moreButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: transparent;
+}
+
+.moreButton:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.menu {
+  position: absolute;
+  top: 34px;
+  right: 0;
+  z-index: 2;
+  min-width: 120px;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-input);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+.actions:hover .menu,
+.actions:focus-within .menu {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: transparent;
+  color: #ef4444;
+  text-align: left;
+}
+
+.deleteButton:hover {
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* Markdown Styles */

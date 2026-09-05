@@ -9,7 +9,7 @@ const publicUser = (user) => ({
 
 export const signup = async ({ name, email, password }) => {
   const normalizedEmail = email.trim().toLowerCase();
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = await bcrypt.hash(password, 10);
 
   try {
     const [result] = await db.execute(

@@ -21,6 +21,20 @@
   gap: 16px;
 }
 
+.right button {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.right button:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
 .avatar {
   width: 28px;
   height: 28px;

@@ -4,13 +4,27 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import ChatHeader from "./components/ChatHeader/ChatHeader";
 import MessageList from "./components/MessageList/MessageList";
 import ChatInput from "./components/ChatInput/ChatInput";
+import Login from "./components/login/login";
 import "./App.css";
 
 const API_BASE_URL = "/api";
 
+const getStoredUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("authUser"));
+  } catch {
+    return null;
+  }
+};
+
+const authConfig = () => ({
+  headers: { "X-User-Id": String(getStoredUser()?.id || "") },
+});
+
 function App() {
   const [conversations, setConversations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState(getStoredUser);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -19,7 +33,10 @@ function App() {
 
   const fetchConversations = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/chat/conversations`);
+      const response = await axios.get(
+        `${API_BASE_URL}/chat/conversations`,
+        authConfig(),
+      );
       if (response.data.success) {
         setConversations(response.data.data);
       }
@@ -29,12 +46,26 @@ function App() {
   };
 
   useEffect(() => {
-    fetchConversations();
-  }, []);
+    if (!user) return;
+
+    const loadConversations = async () => {
+      await fetchConversations();
+    };
+
+    loadConversations();
+  }, [user]);
 
   useEffect(() => {
     scrollToBottom();
   }, [conversations, isLoading]);
+
+  if (!user) return <Login onAuthenticated={setUser} />;
+
+  const handleLogout = () => {
+    localStorage.removeItem("authUser");
+    setConversations([]);
+    setUser(null);
+  };
 
   const handleSendMessage = async (question) => {
     // Optimistically add user message
@@ -47,9 +78,11 @@ function App() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/chat/conversations`, {
-        question,
-      });
+      const response = await axios.post(
+        `${API_BASE_URL}/chat/conversations`,
+        { question },
+        authConfig(),
+      );
       if (response.data.success) {
         const { userConversation, assistantConversation } = response.data.data;
         // Replace temp message with real ones
@@ -79,17 +112,32 @@ function App() {
     }
   };
 
+  const handleDeleteConversation = async (conversationId) => {
+    try {
+      await axios.delete(
+        `${API_BASE_URL}/chat/conversations/${conversationId}`,
+        authConfig(),
+      );
+      setConversations((prev) =>
+        prev.filter((conversation) => conversation.id !== conversationId),
+      );
+    } catch (error) {
+      console.error("Error deleting conversation:", error);
+    }
+  };
+
   return (
     <div className="app">
       <Sidebar />
 
       <main className="chat">
-        <ChatHeader />
+        <ChatHeader user={user} onLogout={handleLogout} />
 
         <MessageList
           conversations={conversations}
           isLoading={isLoading}
           messagesEndRef={messagesEndRef}
+          onDeleteConversation={handleDeleteConversation}
         />
 
         <ChatInput

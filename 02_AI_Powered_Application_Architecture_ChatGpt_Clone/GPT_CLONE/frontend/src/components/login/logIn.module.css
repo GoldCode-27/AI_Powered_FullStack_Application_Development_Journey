@@ -1,4 +1,29 @@
+.page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  background: #212121;
+  color: #ececec;
+}
 
+.form {
+  display: grid;
+  gap: 16px;
+  width: min(400px, calc(100% - 32px));
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: #2f2f2f;
+}
+
+.form h1 { font-size: 26px; }
+.form p { color: #b4b4b4; }
+.form label { display: grid; gap: 7px; font-size: 14px; }
+.form input { padding: 11px 12px; border: 1px solid #555; border-radius: 6px; background: #212121; color: #ececec; }
+.form button { padding: 11px; border: 0; border-radius: 6px; background: #10a37f; color: white; cursor: pointer; }
+.form button:disabled { opacity: 0.6; cursor: wait; }
+.switchButton { background: transparent !important; color: #b4b4b4 !important; }
+.error { color: #f87171; font-size: 14px; }
 .login-container {
   display: flex;
   flex-direction: column;

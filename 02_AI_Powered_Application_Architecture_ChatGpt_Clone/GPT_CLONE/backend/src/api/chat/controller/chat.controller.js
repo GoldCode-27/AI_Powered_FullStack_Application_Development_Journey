@@ -19,7 +19,11 @@ export const createConversationController = async (req, res) => {
       });
 
     const result = await createConversationService(question, userId);
-    res.status(201).json({ success: true, message: "Created", data: result });
+    res.status(201).json({
+         success: true,
+         message: "Created",
+         data: result
+         });
   } catch (err) {
     res.status(err.status || 500).json({
       success: false,
@@ -28,11 +32,15 @@ export const createConversationController = async (req, res) => {
   }
 };
 
+//function to fetch conversations via user's ID
 export const getConversationsController = async (req, res) => {
   try {
     const userId = getUserId(req);
     const result = await getRecentConversationsRows(100, userId);
-    res.status(200).json({ success: true, data: result });
+    res.status(200).json({
+         success: true,
+         data: result 
+        });
   } catch (err) {
     res.status(500).json({
       success: false,
@@ -41,14 +49,19 @@ export const getConversationsController = async (req, res) => {
   }
 };
 
+//function to delete each conversations
 export const deleteConversationController = async (req, res) => {
   try {
     const { id } = req.params;
     const result = await deleteConversationService(id, getUserId(req));
-    res.status(200).json({ success: true, message: result.message });
+    res.status(200).json({ 
+         success: true,
+         message: result.message
+         });
   } catch (err) {
     res
       .status(err.status || 500)
-      .json({ success: false, message: err.message });
+      .json({ success: false,
+         message: err.message });
   }
 };

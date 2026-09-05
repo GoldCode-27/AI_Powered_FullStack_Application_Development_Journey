@@ -32,6 +32,7 @@ export const getRecentConversationsRows = async (limit = 10, userId) => {
 // function to generate an assistant's answer using the Google Generative AI client
 export const generateAssistantAnswer = async ({ history, question }) => {
   try {
+
     //shaping the model behavior
     const model = genAI.getGenerativeModel({
       model: GEMINI_MODEL,
@@ -39,11 +40,14 @@ export const generateAssistantAnswer = async ({ history, question }) => {
         "You are a specialized Software Development Assistant. Your expertise is strictly limited to programming, software architecture, debugging, and computer science. If a user asks a question unrelated to coding or technology, politely decline and state that you are only designed to assist with software development tasks.",
     });
 
+
+
     //formatting the history on real database for model understandable
     const formattedHistory = (history ?? []).map((row) => ({
       role: row.role === "asistant" ? "model" : "user",
       parts: [{ text: row.content }],
     }));
+
 
     //starting chat
     const chat = model.startChat({
@@ -58,7 +62,7 @@ export const generateAssistantAnswer = async ({ history, question }) => {
     const result = await chat.sendMessage(question);
     const response = await result.response;
 
-    // console.log(response);
+    console.log(response);
 
     const text = response.text();
 
