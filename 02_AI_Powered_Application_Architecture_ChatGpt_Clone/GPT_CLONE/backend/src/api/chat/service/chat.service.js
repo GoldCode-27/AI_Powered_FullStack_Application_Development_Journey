@@ -9,14 +9,17 @@ const GEMINI_MODEL = process.env.GEMINI_MODEL_NAME || "gemini-3.5-flash-lite";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // function to fetch recent conversations from the database, with a default limit of 10
-export const getRecentConversationsRows = async (limit = 10) => {
+export const getRecentConversationsRows = async (limit = 10, userId) => {
   try {
     const normalizedLimit = Number.parseInt(limit, 10);
-    const safeLimit = Number.isNaN(normalizedLimit) || normalizedLimit <= 0 ? 20 : normalizedLimit;
+    const safeLimit =
+      Number.isNaN(normalizedLimit) || normalizedLimit <= 0
+        ? 20
+        : normalizedLimit;
 
     const [rows] = await db.execute(
-      `SELECT id, content, role, created_at FROM conversations ORDER BY id DESC LIMIT ?`,
-      [safeLimit]
+      `SELECT id, content, role, created_at FROM conversations WHERE user_id = ? ORDER BY id DESC LIMIT ?`,
+      [userId, safeLimit],
     );
 
     return [...rows].reverse();
@@ -29,16 +32,16 @@ export const getRecentConversationsRows = async (limit = 10) => {
 // function to generate an assistant's answer using the Google Generative AI client
 export const generateAssistantAnswer = async ({ history, question }) => {
   try {
-    
     //shaping the model behavior
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: GEMINI_MODEL,
-      systemInstruction: "You are a specialized Software Development Assistant. Your expertise is strictly limited to programming, software architecture, debugging, and computer science. If a user asks a question unrelated to coding or technology, politely decline and state that you are only designed to assist with software development tasks."
+      systemInstruction:
+        "You are a specialized Software Development Assistant. Your expertise is strictly limited to programming, software architecture, debugging, and computer science. If a user asks a question unrelated to coding or technology, politely decline and state that you are only designed to assist with software development tasks.",
     });
 
     //formatting the history on real database for model understandable
     const formattedHistory = (history ?? []).map((row) => ({
-      role: row.role === "assistant" ? "model" : "user",
+      role: row.role === "asistant" ? "model" : "user",
       parts: [{ text: row.content }],
     }));
 
@@ -54,8 +57,8 @@ export const generateAssistantAnswer = async ({ history, question }) => {
     //sending a message to the model
     const result = await chat.sendMessage(question);
     const response = await result.response;
-    
-      // console.log(response);
+
+    // console.log(response);
 
     const text = response.text();
 
@@ -70,11 +73,11 @@ export const generateAssistantAnswer = async ({ history, question }) => {
 };
 
 //
-const getMessageById = async (messageId) => {
+const getMessageById = async (messageId, userId) => {
   try {
     const [rows] = await db.execute(
-      "SELECT id, role, content, token_count, created_at FROM conversations WHERE id = ? LIMIT 1",
-      [messageId],
+      "SELECT id, role, content, token_count, created_at FROM conversations WHERE id = ? AND user_id = ? LIMIT 1",
+      [messageId, userId],
     );
 
     if (!rows[0]) return null;
@@ -85,7 +88,7 @@ const getMessageById = async (messageId) => {
   }
 };
 
-export const createConversationService = async (question) => {
+export const createConversationService = async (question, userId) => {
   try {
     if (!question.trim()) {
       const error = new Error("question is required.");
@@ -93,12 +96,12 @@ export const createConversationService = async (question) => {
       throw error;
     }
 
-    const historyRows = await getRecentConversationsRows(10);
+    const historyRows = await getRecentConversationsRows(10, userId);
 
     //saving user's prompt
     const [result] = await db.execute(
-      'INSERT INTO conversations (content, role) VALUES (?, "user")',
-      [question],
+      'INSERT INTO conversations (content, role, user_id) VALUES (?, "user", ?)',
+      [question, userId],
     );
 
     //get answer form model
@@ -109,12 +112,15 @@ export const createConversationService = async (question) => {
 
     //saving the model's answer
     const [createAssistantMessageResult] = await db.execute(
-      "INSERT INTO conversations (role, content, token_count) VALUES (?, ?, ?)",
-      ["asistant", text, totalTokens],
+      "INSERT INTO conversations (role, content, token_count, user_id) VALUES (?, ?, ?, ?)",
+      ["asistant", text, totalTokens, userId],
     );
 
-    const userConversation = await getMessageById(result.insertId);
-    const assistantConversation = await getMessageById(createAssistantMessageResult.insertId);
+    const userConversation = await getMessageById(result.insertId, userId);
+    const assistantConversation = await getMessageById(
+      createAssistantMessageResult.insertId,
+      userId,
+    );
 
     return {
       assistantConversation,
@@ -127,11 +133,11 @@ export const createConversationService = async (question) => {
 };
 
 // function deleting a conversation via ID
-export const deleteConversationService = async (id) => {
+export const deleteConversationService = async (id, userId) => {
   try {
     const [result] = await db.execute(
-      "DELETE FROM conversations WHERE id = ?",
-      [id]
+      "DELETE FROM conversations WHERE id = ? AND user_id = ?",
+      [id, userId],
     );
 
     // checking data on that assigned ID
