@@ -7,9 +7,11 @@ import {
   getConversationsController,
   deleteConversationController,
 } from "./controller/chat.controller.js";
+import { requireAuth } from "../../middleware/requireAuth.js";
 
 //importing the express router
 const chatRouter = express.Router();
+chatRouter.use(requireAuth);
 
 // Endpoint to create a new chat conversation
 chatRouter.post("/conversations", createConversationController());
