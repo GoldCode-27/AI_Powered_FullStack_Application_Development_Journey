@@ -16,7 +16,10 @@ export const signupController = async (req, res) => {
   }
 
   const user = await signup({ name, email, password });
-  return res.status(201).json({ success: true, user });
+  return res.status(201).json({
+     success: true,
+     user 
+    });
 };
 
 export const loginController = async (req, res) => {
@@ -24,9 +27,14 @@ export const loginController = async (req, res) => {
   if (!email?.trim() || !password) {
     return res
       .status(400)
-      .json({ success: false, message: "Email and password are required." });
+      .json({
+         success: false,
+         message: "Email and password are required." 
+        });
   }
 
-  const user = await login({ email, password });
-  return res.json({ success: true, user });
+  const user = await login({ 
+    email, password });
+  return res.json({ 
+    success: true, user });
 };
