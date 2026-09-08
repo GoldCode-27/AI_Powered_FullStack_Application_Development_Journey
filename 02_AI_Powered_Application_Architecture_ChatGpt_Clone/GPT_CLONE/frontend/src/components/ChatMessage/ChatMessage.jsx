@@ -16,9 +16,7 @@ export default function ChatMessage({ id, role, content, onDelete }) {
       </div>
       <div className={styles.messageBody}>
         <div className={styles.content}>
-          {role === "user" ? (
-            content
-          ) : (
+          {role === "user" ? (content ) : (
             <div className={styles.markdownBody}>
               <ReactMarkdown>{content}</ReactMarkdown>
             </div>

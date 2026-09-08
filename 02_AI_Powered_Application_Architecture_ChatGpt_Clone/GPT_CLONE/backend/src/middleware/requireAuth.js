@@ -8,6 +8,8 @@ export const requireAuth = (req, res, next) => {
     ? authorization.slice(7)
     : null;
 
+    console.log(authorization);
+
   if (!jwtSecret || !token) {
     return res.status(401).json({
       success: false,

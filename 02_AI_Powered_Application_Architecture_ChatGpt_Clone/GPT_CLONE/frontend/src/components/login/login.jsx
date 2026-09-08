@@ -8,24 +8,37 @@ export default function Login({ onAuthenticated }) {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError("");
-    setIsSubmitting(true);
-    try {
-      const endpoint = isSignup ? "signup" : "login";
-      const response = await axios.post(`/api/auth/${endpoint}`, form);
-      localStorage.setItem("authToken", response.data.token);
-      localStorage.setItem("authUser", JSON.stringify(response.data.user));
-      onAuthenticated(response.data.user);
-    } catch (requestError) {
-      setError(
-        requestError.response?.data?.message || "Unable to authenticate.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  setError("");
+  setIsSubmitting(true); 
+  try {
+    const endpoint = isSignup ? "signup" : "login";
+    const response = await axios.post(`/api/auth/${endpoint}`,form);
+
+    //necessary credentials  only for accessinf who is instead of quering the database
+    const safeUser = {
+      id: response.data.user.id,
+      name: response.data.user.name,
+      email: response.data.user.email,
+      // password: response.data.user.email,
+    };
+
+    //Store user's token
+    localStorage.setItem("authToken", response.data.token);
+    
+    //Store user's data
+    localStorage.setItem("authUser", JSON.stringify(safeUser));
+
+    onAuthenticated(safeUser);
+  } catch (requestError) {
+    setError(
+      requestError.response?.data?.message || "Unable to authenticate." 
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <main className={styles.page}>

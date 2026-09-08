@@ -1,16 +1,29 @@
+
+//normalizing the input email
 const normalizeEmail = (email) => email?.trim().toLowerCase();
 
+//custome response method for all handlers
 const rejectInvalid = (res, message) =>
   res.status(400).json({
     success: false,
     message,
   });
 
+  //function to validate signup
 export const validateSignup = (req, res, next) => {
   const { name, email, password } = req.body || {};
 
   if (!name?.trim())
      return rejectInvalid(res, "Name is required.");
+
+    //or 
+//   if (!name?.trim()) {
+//   return res.status(400).json({
+//     success: false,
+//     message: "Name is required.",
+//   });
+// }
+
   if (!email?.trim())
      return rejectInvalid(res, "Email is required.");
   if (!password)
@@ -28,6 +41,7 @@ export const validateSignup = (req, res, next) => {
   return next();
 };
 
+//function to validate login
 export const validateLogin = (req, res, next) => {
   const { email, password } = req.body || {};
 

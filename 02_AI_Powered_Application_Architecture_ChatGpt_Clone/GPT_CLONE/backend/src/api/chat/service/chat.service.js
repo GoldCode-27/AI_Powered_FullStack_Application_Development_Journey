@@ -61,8 +61,9 @@ export const generateAssistantAnswer = async ({ history, question }) => {
     //sending a message to the model
     const result = await chat.sendMessage(question);
     const response = await result.response;
-
-    console.log(response);
+    
+    //returns the all method from the model when every question asked
+    // console.log(response);
 
     const text = response.text();
 
