@@ -10,6 +10,8 @@ import "./App.css";
 const API_BASE_URL = "/api";
 
 const getStoredUser = () => {
+  if (!localStorage.getItem("authToken")) return null;
+
   try {
     return JSON.parse(localStorage.getItem("authUser"));
   } catch {
@@ -17,9 +19,10 @@ const getStoredUser = () => {
   }
 };
 
-const authConfig = () => ({
-  headers: { "X-User-Id": String(getStoredUser()?.id || "") },
-});
+const authConfig = () => {
+  const token = localStorage.getItem("authToken");
+  return token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+};
 
 function App() {
   const [conversations, setConversations] = useState([]);
@@ -63,6 +66,7 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("authUser");
+    localStorage.removeItem("authToken");
     setConversations([]);
     setUser(null);
   };

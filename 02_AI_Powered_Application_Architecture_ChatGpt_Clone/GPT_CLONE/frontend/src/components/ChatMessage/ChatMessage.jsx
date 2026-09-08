@@ -9,7 +9,7 @@ export default function ChatMessage({ id, role, content, onDelete }) {
     <div className={`${styles.message} ${styles[role]}`}>
       <div className={`${styles.avatar} ${styles[role]}`}>
         {role === "user" ? (
-          <User sib ze={18} color="white" />
+          <User size={18} color="white" />
         ) : (
           <Bot size={18} color="white" />
         )}

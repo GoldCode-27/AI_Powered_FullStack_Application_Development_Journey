@@ -15,6 +15,7 @@ export default function Login({ onAuthenticated }) {
     try {
       const endpoint = isSignup ? "signup" : "login";
       const response = await axios.post(`/api/auth/${endpoint}`, form);
+      localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("authUser", JSON.stringify(response.data.user));
       onAuthenticated(response.data.user);
     } catch (requestError) {
