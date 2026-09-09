@@ -1,3 +1,5 @@
+
+//
 const rejectInvalid = (res, message) => {
   return res.status(400).json({
     success: false,
@@ -26,6 +28,7 @@ export const validateConversationId = (req, res, next) => {
     return rejectInvalid(res, "Valid conversation id is required.");
   }
 
-  req.params.id = String(id);
+  req.params.id = parseInt(id, 10);
+        
   return next();
 };
