@@ -18,20 +18,14 @@ const chatRouter = express.Router();
 chatRouter.use(requireAuth);
 
 // Endpoint to create a new chat conversation
-chatRouter.post(
-  "/conversations",
-  validateCreateConversation,
-  createConversationController,
+chatRouter.post("/conversations",validateCreateConversation,createConversationController,
 );
 
 // Endpoint to fetch chat conversations
 chatRouter.get("/conversations", getConversationsController);
 
 // Endpoint to delete chat conversation
-chatRouter.delete(
-  "/conversations/:id",
-  validateConversationId,
-  deleteConversationController,
+chatRouter.delete("/conversations/:id",validateConversationId,deleteConversationController,
 );
 
 export default chatRouter;
