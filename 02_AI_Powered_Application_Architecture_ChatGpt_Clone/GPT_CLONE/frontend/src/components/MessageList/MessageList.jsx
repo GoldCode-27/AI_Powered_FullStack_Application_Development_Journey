@@ -2,12 +2,7 @@ import { Bot } from "lucide-react";
 import ChatMessage from "../ChatMessage/ChatMessage";
 import styles from "./MessageList.module.css";
 
-export default function MessageList({
-  conversations,
-  isLoading,
-  messagesEndRef,
-  onDeleteConversation,
-}) {
+export default function MessageList({conversations, isLoading, messagesEndRef,onDeleteConversation}) {
   return (
     <div className={styles.messages}>
       {conversations?.length === 0 ? (
