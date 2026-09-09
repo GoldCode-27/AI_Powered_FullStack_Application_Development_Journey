@@ -10,7 +10,8 @@ import "./App.css";
 const API_BASE_URL = "/api";
 
 const getStoredUser = () => {
-  if (!localStorage.getItem("authToken")) return null;
+  if (!localStorage.getItem("authToken")) 
+    return null;
 
   try {
     return JSON.parse(localStorage.getItem("authUser"));
