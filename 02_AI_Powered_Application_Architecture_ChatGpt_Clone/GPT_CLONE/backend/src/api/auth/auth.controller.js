@@ -8,11 +8,18 @@ const createToken = (user) => {
     throw error;
   }
 
-  return jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
-};
+  const payload = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  }
 
+  const generatedToken = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "1h",})
+
+  return generatedToken;
+};
+       
 export const signupController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -29,7 +36,7 @@ export const signupController = async (req, res) => {
       message: error.message || "Signup failed.",
     });
   }
-};
+}; 
 
 export const loginController = async (req, res) => {
   try {
