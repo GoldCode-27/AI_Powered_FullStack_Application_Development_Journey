@@ -83,9 +83,7 @@ function App() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/chat/conversations`,
-        { question },
+      const response = await axios.post(`${API_BASE_URL}/chat/conversations`, { question },
         authConfig(),
       );
       if (response.data.success) {
