@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Architecture, Model Selection & Advanced Terminology</title>
+
+    <!-- Font & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ── Reset & Base ── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f6f4fc;
+            --surface: #ffffff;
+            --surface-2: #f0ecfa;
+            --text: #1a0b2e;
+            --text-secondary: #3d2b5c;
+            --text-muted: #6b5a8a;
+            --primary: #6d28d9;
+            --primary-light: #8b5cf6;
+            --primary-gradient: linear-gradient(135deg, #3b0764 0%, #6d28d9 50%, #8b5cf6 100%);
+            --accent: #b45309;
+            --accent-light: #f59e0b;
+            --border: #e0d6f0;
+            --radius: 16px;
+            --shadow: 0 8px 30px rgba(40, 10, 80, 0.08);
+            --shadow-hover: 0 16px 48px rgba(40, 10, 80, 0.14);
+            --transition: 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            --max-width: 1200px;
+            --toc-width: 260px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 0;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--primary-light);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            background: var(--surface-2);
+            border-left: 4px solid var(--primary-light);
+            padding: 1.2rem 1.6rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            margin: 1.6rem 0;
+        }
+
+        .highlight-box.warn {
+            border-left-color: var(--accent);
+            background: #fffbeb;
+        }
+
+        .highlight-box strong {
+            color: var(--primary);
+        }
+
+        .code-inline {
+            background: var(--surface-2);
+            padding: 0.1rem 0.5rem;
+            border-radius: 6px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            background: var(--primary-gradient);
+            color: #fff;
+            padding: 5rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 60%;
+            height: 140%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.6rem, 6vw, 4.2rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(to right, #fcd34d, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 680px;
+            opacity: 0.9;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            opacity: 0.75;
+            margin-top: 0.5rem;
+        }
+
+        .hero-meta i {
+            margin-right: 0.4rem;
+        }
+
+        /* ── Layout ── */
+        .page-wrap {
+            display: flex;
+            gap: 2.5rem;
+            margin-top: -2rem;
+            position: relative;
+            z-index: 3;
+            align-items: flex-start;
+        }
+
+        /* ── Table of Contents ── */
+        .toc {
+            flex: 0 0 var(--toc-width);
+            position: sticky;
+            top: 2rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem 1.2rem;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .toc-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-title i {
+            font-size: 0.8rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-list li {
+            margin-bottom: 0.2rem;
+        }
+
+        .toc-list a {
+            display: block;
+            padding: 0.35rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 2px solid transparent;
+        }
+
+        .toc-list a:hover {
+            background: var(--surface-2);
+            color: var(--primary);
+            border-left-color: var(--primary-light);
+        }
+
+        .toc-list a.active {
+            background: var(--surface-2);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .toc-list .toc-sub {
+            padding-left: 1.6rem;
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        /* ── Main Content ── */
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* ── Cards ── */
+        .section-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 2rem 2.2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .section-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .section-card h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-card h2 .section-number {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            background: var(--surface-2);
+            padding: 0.1rem 0.7rem;
+            border-radius: 40px;
+            letter-spacing: 0.02em;
+        }
+
+        .section-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.8rem 0 0.6rem;
+            color: var(--text);
+        }
+
+        .section-card h4 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin: 1.4rem 0 0.4rem;
+            color: var(--text-secondary);
+        }
+
+        .section-card p {
+            margin: 0.8rem 0;
+            color: var(--text-secondary);
+        }
+
+        .section-card ul,
+        .section-card ol {
+            margin: 0.8rem 0 0.8rem 1.4rem;
+            color: var(--text-secondary);
+        }
+
+        .section-card li {
+            margin-bottom: 0.3rem;
+        }
+
+        .section-card .lead {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--text);
+        }
+
+        /* ── Definition block ── */
+        .definition-block {
+            background: var(--surface-2);
+            border-radius: var(--radius);
+            padding: 1.4rem 1.8rem;
+            margin: 1.2rem 0 1.6rem;
+            border: 1px solid var(--border);
+        }
+
+        .definition-block .label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .definition-block .def-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* ── Tables ── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1.2rem 0 1.6rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .table-wrap th {
+            background: var(--surface-2);
+            color: var(--text);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid var(--border);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .table-wrap td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .table-wrap tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-wrap tr:hover td {
+            background: var(--surface-2);
+        }
+
+        /* ── Pillar grid ── */
+        .pillar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.2rem 0;
+        }
+
+        .pillar-item {
+            background: var(--surface-2);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.2rem;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .pillar-item i {
+            font-size: 2rem;
+            color: var(--primary-light);
+            margin-bottom: 0.4rem;
+        }
+
+        .pillar-item .label {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .pillar-item .desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Mode cards ── */
+        .mode-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.2rem 0;
+        }
+
+        .mode-card {
+            background: var(--surface-2);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.4rem;
+            border-left: 4px solid var(--primary-light);
+        }
+
+        .mode-card .mode-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--primary);
+        }
+
+        .mode-card .mode-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0.2rem 0 0.4rem;
+        }
+
+        .mode-card .mode-use {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ── Prompt example ── */
+        .prompt-example {
+            background: #1a0b2e;
+            color: #ede9fe;
+            padding: 1.2rem 1.6rem;
+            border-radius: var(--radius);
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .prompt-example .label {
+            color: #a78bfa;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.4rem;
+        }
+
+        .prompt-example .highlight {
+            color: #fcd34d;
+        }
+
+        .prompt-example .comment {
+            color: #9ca3af;
+        }
+
+        /* ── Analogy box ── */
+        .analogy-box {
+            background: #f5f3ff;
+            border-radius: var(--radius);
+            padding: 1.2rem 1.6rem;
+            border: 1px solid #ddd6fe;
+            margin: 1.2rem 0;
+        }
+
+        .analogy-box .emoji {
+            font-size: 1.6rem;
+            margin-right: 0.6rem;
+        }
+
+        /* ── Back to top ── */
+        .back-top {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--surface);
+            color: var(--text-secondary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            margin-top: 1rem;
+        }
+
+        .back-top:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 2rem 0 3rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 1rem;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .page-wrap {
+                flex-direction: column;
+            }
+            .toc {
+                flex: 1 1 auto;
+                position: static;
+                max-height: none;
+                padding: 1.2rem;
+                margin-bottom: 1.5rem;
+            }
+            .toc-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.2rem 0.6rem;
+            }
+            .toc-list li {
+                margin-bottom: 0;
+            }
+            .toc-list a {
+                padding: 0.2rem 0.8rem;
+                font-size: 0.8rem;
+                border-left: none;
+                border-bottom: 2px solid transparent;
+            }
+            .toc-list a:hover {
+                border-left-color: transparent;
+                border-bottom-color: var(--primary-light);
+            }
+            .toc-list a.active {
+                border-left-color: transparent;
+                border-bottom-color: var(--primary);
+            }
+            .toc-list .toc-sub {
+                padding-left: 0.4rem;
+            }
+            .mode-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero {
+                padding: 3rem 0 2.5rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            .section-card {
+                padding: 1.2rem 1.2rem;
+            }
+            .section-card h2 {
+                font-size: 1.4rem;
+                flex-wrap: wrap;
+            }
+            .pillar-grid {
+                grid-template-columns: 1fr;
+            }
+            .table-wrap table {
+                font-size: 0.8rem;
+            }
+            .table-wrap th,
+            .table-wrap td {
+                padding: 0.5rem 0.6rem;
+            }
+        }
+
+        /* ── Scroll reveal ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══ HERO ═══ -->
+    <header class="hero" id="top">
+        <div class="container">
+            <div class="tag"><i class="fas fa-cogs" style="margin-right:0.4rem;"></i> Advanced AI</div>
+            <h1>AI Architecture, <span>Model Selection</span> &amp; Terminology</h1>
+            <p>From the anatomy of an AI application to prompt engineering strategies — a deep dive into the components, controls, and decisions that power modern AI systems.</p>
+            <div class="hero-meta">
+                <span><i class="fas fa-book-open"></i> 5 chapters</span>
+                <span><i class="fas fa-clock"></i> ~30 min read</span>
+                <span><i class="fas fa-code"></i> For AI builders</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══ MAIN LAYOUT ═══ -->
+    <div class="container">
+        <div class="page-wrap">
+
+            <!-- ─── Table of Contents ─── -->
+            <nav class="toc" aria-label="Table of Contents">
+                <div class="toc-title"><i class="fas fa-list-ul"></i> Contents</div>
+                <ul class="toc-list" id="tocList">
+                    <li><a href="#section-1">1. Anatomy of an AI Application</a></li>
+                    <li><a href="#section-1-1" class="toc-sub">1.1 The Brain (LLM API)</a></li>
+                    <li><a href="#section-1-2" class="toc-sub">1.2 The Backend (Orchestrator)</a></li>
+                    <li><a href="#section-1-3" class="toc-sub">1.3 The Frontend (Interface)</a></li>
+                    <li><a href="#section-2">2. Essential Terminology</a></li>
+                    <li><a href="#section-2-1" class="toc-sub">2.1 Context Window</a></li>
+                    <li><a href="#section-2-2" class="toc-sub">2.2 Tokens</a></li>
+                    <li><a href="#section-2-3" class="toc-sub">2.3 Parameters / Weights</a></li>
+                    <li><a href="#section-2-4" class="toc-sub">2.4 Inference &amp; Performance</a></li>
+                    <li><a href="#section-3">3. Controlling the Model (Knobs)</a></li>
+                    <li><a href="#section-3-1" class="toc-sub">3.1 Temperature</a></li>
+                    <li><a href="#section-3-2" class="toc-sub">3.2 Top‑k</a></li>
+                    <li><a href="#section-3-3" class="toc-sub">3.3 Top‑p (Nucleus)</a></li>
+                    <li><a href="#section-3-4" class="toc-sub">3.4 Putting It All Together</a></li>
+                    <li><a href="#section-4">4. Model Selection Strategy</a></li>
+                    <li><a href="#section-4-1" class="toc-sub">4.1 Parameter Size</a></li>
+                    <li><a href="#section-4-2" class="toc-sub">4.2 Context Window</a></li>
+                    <li><a href="#section-4-3" class="toc-sub">4.3 Modality</a></li>
+                    <li><a href="#section-4-4" class="toc-sub">4.4 Capability &amp; Pricing</a></li>
+                    <li><a href="#section-5">5. Prompt Engineering Strategies</a></li>
+                    <li><a href="#section-5-1" class="toc-sub">5.1 Understanding Prompts</a></li>
+                    <li><a href="#section-5-2" class="toc-sub">5.2 Key Techniques</a></li>
+                    <li><a href="#section-5-3" class="toc-sub">5.3 System vs User Prompts</a></li>
+                </ul>
+            </nav>
+
+            <!-- ─── Main Content ─── -->
+            <main class="main">
+
+                <!-- ============================================================ -->
+                <!-- SECTION 1 – ANATOMY -->
+                <!-- ============================================================ -->
+                <section class="section-card reveal" id="section-1">
+                    <h2>
+                        <span class="section-number">1</span>
+                        The Anatomy of an AI Application
+                    </h2>
+                    <p class="lead">
+                        A helpful way to understand an AI application is to imagine a <strong>high-end restaurant</strong>. Each part of the app maps to a role in the restaurant.
+                    </p>
+
+                    <div class="analogy-box">
+                        <span class="emoji">🍽️</span>
+                        <strong>Restaurant analogy:</strong> The chef (AI model) is locked in the kitchen and only cooks based on the ticket (prompt). The waiter (backend) takes orders, checks permissions, and translates messy human language into precise instructions. The dining room (frontend) is where customers interact and see results.
+                    </div>
+
+                    <h3 id="section-1-1">The “Brain” (LLM API – Inference Layer)</h3>
+                    <p>External services like OpenAI API or Anthropic API provide raw intelligence. They act as translators between your code and the underlying neural network. Think of it as the <strong>genius chef</strong> who knows thousands of recipes but never sees customers directly — only what’s written on the ticket (the prompt).</p>
+                    <ul>
+                        <li>Models like GPT-4, Gemini, and Claude sit behind an API.</li>
+                        <li>They don’t know your users directly — they only respond to prompts and data you send.</li>
+                    </ul>
+
+                    <h3 id="section-1-2">The Backend (Orchestrator)</h3>
+                    <p>The application logic layer, typically built with FastAPI or Node.js/Express. It manages:</p>
+                    <ul>
+                        <li><strong>Prompt Engineering:</strong> formatting user input into a structured prompt for the LLM.</li>
+                        <li><strong>Authentication &amp; Guardrails:</strong> verifying users and filtering malicious inputs.</li>
+                        <li><strong>Asynchronous Tasks:</strong> managing long-running AI generations to prevent timeouts.</li>
+                    </ul>
+                    <p>Like a waiter, it receives requests, checks permissions, and translates human language into structured instructions. For example: <em>“I want that spicy thing I had last time”</em> becomes <em>“Dish #42, extra chili, for table 5.”</em></p>
+
+                    <h3 id="section-1-3">The Frontend (The Interface)</h3>
+                    <p>The user interface where users input prompts and view results. Modern AI apps often handle <strong>real-time streaming</strong> (via Server-Sent Events) to display the LLM’s response token-by-token, creating a typing effect.</p>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- SECTION 2 – TERMINOLOGY -->
+                <!-- ============================================================ -->
+                <section class="section-card reveal" id="section-2">
+                    <h2>
+                        <span class="section-number">2</span>
+                        Essential Terminology for AI Architectures
+                    </h2>
+
+                    <h3 id="section-2-1">Context Window</h3>
+                    <p>The number of tokens a foundational model can process in a given prompt. A larger context window lets the model access more information, leading to more coherent and relevant responses.</p>
+                    <div class="highlight-box">
+                        <strong>Scale example – 1 million tokens can process:</strong>
+                        <ul>
+                            <li>50,000 lines of code (80 chars per line)</li>
+                            <li>All text messages you’ve sent in the last 5 years</li>
+                            <li>8 average-length English novels</li>
+                            <li>Transcripts of over 200 podcast episodes</li>
+                            <li>1 hour of video without audio</li>
+                            <li>~45 minutes of video with audio</li>
+                            <li>9.5 hours of audio</li>
+                        </ul>
+                    </div>
+
+                    <h3 id="section-2-2">Tokens</h3>
+                    <p>The smallest unit of text a model processes — think of it as a piece of a word. In English, a token is roughly <strong>three-quarters of a word</strong>.</p>
+                    <ul>
+                        <li><strong>Why it matters:</strong> Tokens drive costs (billed per token) and define the limits of a model’s memory (context window).</li>
+                        <li>Every product decision involving text length or conversation history comes back to tokens.</li>
+                    </ul>
+
+                    <h3 id="section-2-3">Parameters / Weights</h3>
+                    <p>The internal numbers a model has learned during training. When people say a model has <strong>70 billion parameters</strong>, they’re describing its size and roughly its capacity.</p>
+                    <ul>
+                        <li>More parameters → more capable, but slower and more expensive to run.</li>
+                        <li>A 7B model can run on a laptop; a 400B+ model needs serious infrastructure.</li>
+                    </ul>
+
+                    <h3 id="section-2-4">Inference &amp; Performance</h3>
+                    <p><strong>Training happens once. Inference happens every time a user hits your feature — and it’s where your costs live.</strong></p>
+                    <ul>
+                        <li><strong>Inference:</strong> running a trained model to get an output. Every user prompt triggers inference.</li>
+                        <li><strong>Latency vs Throughput:</strong> Latency is how long a single request takes (user-facing). Throughput is how many requests per second (system-level). You often trade one for the other.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        <strong>Use case matters:</strong> A chatbot needs low latency (users hate waiting). A batch document processor needs high throughput (process 10,000 docs overnight).
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- SECTION 3 – CONTROLLING THE MODEL -->
+                <!-- ============================================================ -->
+                <section class="section-card reveal" id="section-3">
+                    <h2>
+                        <span class="section-number">3</span>
+                        Controlling the Model (The Knobs)
+                    </h2>
+                    <p>Sampling techniques control how language models choose the next word during text generation. The most common parameters are <strong>Temperature, Top-k, and Top-p</strong>. They directly affect reliability, creativity, latency, and cost.</p>
+
+                    <div class="highlight-box">
+                        <strong>First thing to remember:</strong> All these parameters influence one core process — how the model chooses the next token. A token is a small piece of text used internally by the model (a word, part of a word, punctuation, or a space).
+                    </div>
+
+                    <h3 id="section-3-1">Temperature – The Creativity Thermostat</h3>
+                    <p>Controls how adventurous the model is when picking the next word. It reshapes the probability distribution and typically ranges from <strong>0 to 2</strong>.</p>
+                    <ul>
+                        <li><strong>Low temperature:</strong> safer, more predictable text.</li>
+                        <li><strong>High temperature:</strong> more creative and varied text.</li>
+                    </ul>
+
+                    <h3 id="section-3-2">Top‑k – Restricting the Candidate Pool</h3>
+                    <p>Forces the model to choose its next word from only the <em>k</em> most probable words.</p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>k value</th>
+                                    <th>Effect</th>
+                                    <th>Example for “I like to drink…”</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Small (e.g., 5)</strong></td>
+                                    <td>Narrow, focused, safe</td>
+                                    <td>{water, coffee, tea, juice, milk}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Large (e.g., 50)</strong></td>
+                                    <td>Wider variety, unexpected twists</td>
+                                    <td>{smoothies, cocktails, hot chocolate, kombucha…}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><em>Think of it like a menu: small k = limited popular dishes; large k = full menu including rare items.</em></p>
+
+                    <h3 id="section-3-3">Top‑p (Nucleus Sampling) – A Dynamic Filter</h3>
+                    <p>Selects the smallest group of words whose combined probability adds up to a threshold <em>p</em>. This is more adaptive than Top‑k.</p>
+                    <div class="prompt-example">
+                        <div class="label"><i class="fas fa-lightbulb"></i> Example</div>
+                        Prompt: “The capital of France is…”<br />
+                        <span class="highlight">p = 0.9</span> → almost always “Paris”<br />
+                        <span class="highlight">p = 0.95</span> → might consider “Lyon”, “Marseille” if distribution allows
+                    </div>
+                    <p>Top‑p adapts naturally: narrow when the answer is obvious, broader when multiple paths are possible. Many people choose either Top‑k or Top‑p, but not both.</p>
+
+                    <h3 id="section-3-4">Putting It All Together</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Temperature</th>
+                                    <th>Top‑p</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Coding / Factual Q&amp;A</strong></td>
+                                    <td>Low (e.g., 0.2)</td>
+                                    <td>Moderate (e.g., 0.8)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Creative Writing / Brainstorming</strong></td>
+                                    <td>High (e.g., 0.8)</td>
+                                    <td>Moderate to high (e.g., 0.95)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>General Chat</strong></td>
+                                    <td>Balanced (e.g., 0.5)</td>
+                                    <td>Moderate (e.g., 0.9)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- SECTION 4 – MODEL SELECTION -->
+                <!-- ============================================================ -->
+                <section class="section-card reveal" id="section-4">
+                    <h2>
+                        <span class="section-number">4</span>
+                        Model Selection Strategy
+                    </h2>
+                    <p class="lead">Choosing a model is like choosing the engine for your car — balance power, cost, and fuel usage for your specific job. Here are the five main considerations.</p>
+
+                    <h3 id="section-4-1">Parameter Size</h3>
+                    <ul>
+                        <li><strong>Small (7B–8B):</strong> fast, inexpensive — good for simple chatbots, categorization, summarization.</li>
+                        <li><strong>Larger (70B+):</strong> slower, pricier — better at complex reasoning, coding, hard logic.</li>
+                        <li><strong>Huge (400B+):</strong> like GPT-4-level — best performance but highest cost; use only when truly needed.</li>
+                    </ul>
+
+                    <h3 id="section-4-2">Context Window Size</h3>
+                    <ul>
+                        <li><strong>Standard (~8K tokens):</strong> fine for normal chat and short documents.</li>
+                        <li><strong>Larger (100K+ tokens):</strong> handle long PDFs, research papers, multiple documents — ideal for RAG systems.</li>
+                        <li><strong>Advanced (e.g., Gemini 1M tokens):</strong> analyze extremely large codebases or transcripts.</li>
+                    </ul>
+                    <p>Pick a model whose context window matches your maximum expected prompt size.</p>
+
+                    <h3 id="section-4-3">Modality</h3>
+                    <p>What types of inputs and outputs the model supports:</p>
+                    <ul>
+                        <li><strong>Text-only:</strong> takes text, outputs text (e.g., Llama 3).</li>
+                        <li><strong>Multimodal:</strong> can take images, audio, sometimes video, in addition to text (e.g., GPT-4V, Gemini).</li>
+                    </ul>
+                    <p>If your app analyzes screenshots, photos, or PDFs with images, you need a vision-enabled model.</p>
+
+                    <h3 id="section-4-4">Capability Specialization &amp; Pricing</h3>
+                    <p>Different models excel at different tasks:</p>
+                    <ul>
+                        <li><strong>Coding:</strong> Claude 3.5 Sonnet, GPT-4o.</li>
+                        <li><strong>Creative writing:</strong> Some models are tuned for storytelling.</li>
+                        <li><strong>Speed &amp; low cost:</strong> Gemini Flash, GPT-4o-mini — ideal for high-traffic apps.</li>
+                    </ul>
+                    <div class="highlight-box">
+                        <strong>Pricing strategy:</strong> Providers charge per million tokens. A common approach is to use cheaper models (e.g., GPT-4o-mini, Gemini Flash) for 80–90% of everyday tasks, reserving expensive flagship models for rare, high-value queries.
+                    </div>
+
+                    <h4>Proprietary vs Open‑Source</h4>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Option</th>
+                                    <th>Examples</th>
+                                    <th>Pros</th>
+                                    <th>Cons</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>A: Proprietary</strong></td>
+                                    <td>GPT-4o, Gemini Pro, Claude 3.5</td>
+                                    <td>Easy integration, highly capable, scales automatically</td>
+                                    <td>Less control, ongoing API costs</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>B: Open‑source</strong></td>
+                                    <td>Llama 3, Mistral, Gemma</td>
+                                    <td>Full control, privacy, no API costs</td>
+                                    <td>Need to manage GPUs and servers, more complexity</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><em>For this course, Option A (Gemini or OpenAI) is recommended so you can focus on building features rather than maintaining infrastructure.</em></p>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- SECTION 5 – PROMPT ENGINEERING -->
+                <!-- ============================================================ -->
+                <section class="section-card reveal" id="section-5">
+                    <h2>
+                        <span class="section-number">5</span>
+                        Prompt Engineering Strategies
+                    </h2>
+                    <p class="lead">
+                        Prompt engineering techniques are strategies used to design and structure prompts — input queries or instructions — provided to AI models. They guide generative AI systems to produce accurate, relevant, and contextually appropriate responses.
+                    </p>
+
+                    <h3 id="section-5-1">Understanding Prompts</h3>
+                    <p>A prompt is the input text or query provided to an AI model to generate a response. The design significantly impacts output quality. There are three primary ways to structure prompts:</p>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Example</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Direct instructions</strong></td>
+                                    <td>Clear, specific commands for straightforward tasks</td>
+                                    <td>“Write a poem about nature.”</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Open‑ended instructions</strong></td>
+                                    <td>Less restrictive; encourage exploration and creativity</td>
+                                    <td>“Tell me about the universe.”</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Task‑specific instructions</strong></td>
+                                    <td>Precise, goal-oriented tasks (translation, calculation)</td>
+                                    <td>“Translate this text into French: Hello.”</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="section-5-2">Key Techniques in Prompt Engineering</h3>
+                    <p>To demonstrate, we’ll use a central task: <em>“Explain the concept of climate change, its causes, and its effects in a way that is accessible to a general audience.”</em></p>
+
+                    <h4>Zero‑shot Prompting</h4>
+                    <p>Ask the model to perform a task without any prior examples. Relies entirely on pretrained knowledge.</p>
+                    <div class="prompt-example">
+                        <div class="label"><i class="fas fa-comment"></i> Zero‑shot prompt</div>
+                        Explain the concept of climate change, its causes, and its effects in simple terms.
+                    </div>
+
+                    <h4>Few‑shot Prompting</h4>
+                    <p>Include a small number of examples within the prompt to demonstrate the task.</p>
+                    <div class="prompt-example">
+                        <div class="label"><i class="fas fa-list"></i> Few‑shot prompt</div>
+                        Explain topics in simple terms.<br />
+                        Example 1:<br />
+                        Topic: Photosynthesis<br />
+                        Explanation: Photosynthesis is how plants use sunlight, water, and air to make their own food.<br />
+                        Example 2:<br />
+                        Topic: Gravity<br />
+                        Explanation: Gravity is the force that pulls things toward each other, like keeping us on the ground.<br />
+                        Now explain:<br />
+                        Topic: Climate Change<br />
+                        Explanation:
+                    </div>
+
+                    <h4>Chain of Thought (CoT) Prompting</h4>
+                    <p>Encourages the model to reason step by step, breaking the problem into smaller components.</p>
+                    <div class="prompt-example">
+                        <div class="label"><i class="fas fa-stairs"></i> CoT prompt</div>
+                        Explain climate change step by step.<br />
+                        Step 1: Define what climate change is.<br />
+                        Step 2: Explain the main causes.<br />
+                        Step 3: Describe the effects on the planet.<br />
+                        Step 4: Give a simple conclusion.<br />
+                        Now follow these steps to explain climate change in simple terms.
+                    </div>
+
+                    <h3 id="section-5-3">System Prompts vs User Prompts</h3>
+                    <p>Most LLM interfaces have two types of prompts:</p>
+                    <ul>
+                        <li><strong>System Prompt:</strong> sets the overall behavior. Example: <em>“You are a helpful Python tutor who explains concepts using simple analogies and provides code examples.”</em></li>
+                        <li><strong>User Prompt:</strong> the specific request. Example: <em>“Explain what a decorator is.”</em></li>
+                    </ul>
+                    <div class="highlight-box">
+                        <strong>Pro tip:</strong> Use system prompts to set consistent behavior across multiple conversations. For a customer support bot, include tone guidelines, topics to avoid, and error-handling instructions.
+                    </div>
+
+                    <div class="highlight-box warn">
+                        <strong>Final takeaway:</strong> Prompt engineering techniques are essential for optimizing AI interactions. By using structured approaches like zero-shot, few-shot, and chain of thought, you can tackle a wide range of tasks — from chatbots to decision-making and education. Despite challenges like hallucinations, the applications continue to expand.
+                    </div>
+
+                    <div style="text-align:right;margin-top:0.8rem;">
+                        <a href="#top" class="back-top"><i class="fas fa-arrow-up"></i> Back to top</a>
+                    </div>
+                </section>
+
+                <!-- ─── Footer ─── -->
+                <footer class="footer">
+                    <p>
+                        <i class="fas fa-brain" style="opacity:0.5;"></i>
+                        AI Architecture, Model Selection &amp; Advanced Terminology &middot; Built with <i class="fas fa-heart" style="color:#6d28d9;"></i> for AI builders
+                        <br /><span style="font-size:0.8rem;opacity:0.6;">Based on the original PDF — reimagined for the web</span>
+                    </p>
+                </footer>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ═══ JavaScript ═══ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ── Scroll reveal ──
+            const revealElements = document.querySelectorAll('.reveal');
+
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.08,
+                rootMargin: '0px 0px -20px 0px'
+            });
+
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            // ── TOC active state ──
+            const tocLinks = document.querySelectorAll('.toc-list a');
+            const sections = Array.from(document.querySelectorAll('.section-card[id]'));
+
+            const sectionMap = new Map();
+            sections.forEach(sec => {
+                const id = sec.id;
+                if (id) sectionMap.set(id, sec);
+            });
+
+            const subHeadings = document.querySelectorAll('h3[id], h4[id]');
+            subHeadings.forEach(el => {
+                const id = el.id;
+                if (id && !sectionMap.has(id)) {
+                    const parent = el.closest('.section-card');
+                    if (parent) {
+                        sectionMap.set(id, { el, parent });
+                    } else {
+                        sectionMap.set(id, el);
+                    }
+                }
+            });
+
+            function updateActiveToc() {
+                let activeId = null;
+                let activeParentId = null;
+
+                for (const [id, data] of sectionMap) {
+                    let target = data.el || data;
+                    if (target && target.getBoundingClientRect) {
+                        const rect = target.getBoundingClientRect();
+                        if (rect.top <= 120) {
+                            activeId = id;
+                            if (data.parent) {
+                                activeParentId = data.parent.id;
+                            } else if (data.closest) {
+                                const parent = data.closest('.section-card');
+                                if (parent) activeParentId = parent.id;
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                if (!activeId && sections.length > 0) {
+                    activeId = sections[0].id;
+                }
+
+                tocLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (!href) return;
+                    const targetId = href.replace('#', '');
+                    link.classList.remove('active');
+                    if (targetId === activeId || targetId === activeParentId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        updateActiveToc();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+
+            setTimeout(updateActiveToc, 200);
+
+            // ── Smooth anchor scroll ──
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        e.preventDefault();
+                        const offset = 80;
+                        const top = targetEl.getBoundingClientRect().top + window.pageYOffset - offset;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                        setTimeout(updateActiveToc, 100);
+                    }
+                });
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
