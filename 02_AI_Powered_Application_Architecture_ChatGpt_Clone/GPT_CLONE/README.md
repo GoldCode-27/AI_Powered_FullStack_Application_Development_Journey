@@ -244,3 +244,114 @@ npm run dev
 npm run build
 npm run lint
 ```
+
+
+## 1. Anatomy of an AI Application
+*******************************
+A standard modern AI application follows a three-tier design pattern[cite: 1]. A helpful conceptual frame is a high-end restaurant[cite: 1]:
+
+  The Chef (AI Model): Executes recipes inside the kitchen strictly based on incoming order tickets[cite: 1].
+
+  The Waiter (Backend): Sanitizes, structures, and validates orders before routing them[cite: 1].
+
+  The Dining Room (Frontend): Provides the customer-facing interface where interactions occur[cite: 1].
+
+  ┌────────────────┐         ┌─────────────────────────┐         ┌─────────────────────────┐
+  │   Frontend     │  ────>  │         Backend         │  ────>  │    Brain (LLM API)      │
+  │   (User UI)    │  <────  │ (Orchestrator/Guard)    │  <────  │    (Inference Engine)   │
+  └────────────────┘         └─────────────────────────┘         └─────────────────────────┘
+
+
+ # 1.1 The Brain (LLM API – Inference Layer)
+Role: Serves as the raw intelligence layer, translating structured text payloads into neural computations[cite: 1].
+
+Hosted Providers: External endpoints such as OpenAI, Anthropic, or Google Gemini[cite: 1].
+
+Isolation: The model has zero direct awareness of application users; it strictly evaluates text context provided in individual payloads[cite: 1].
+
+# 1.2 The Backend (Orchestrator)
+Role: The core business logic layer built using frameworks like FastAPI or Node.js/Express[cite: 1].
+
+Primary Responsibilities:
+
+Prompt Engineering & Formatting: Transforming raw user input into structured model contexts[cite: 1].
+
+Guardrails & Security: Filtering malicious inputs (e.g., prompt injections) and performing user authentication[cite: 1].
+
+Async Task Handling: Managing streaming payloads and avoiding gateway timeout limits[cite: 1].
+
+# 1.3 The Frontend (Interface)
+Role: The client application (React, Next.js, etc.) where users input queries and consume output[cite: 1].
+
+Real-time UX: Utilizes Server-Sent Events (SSE) or WebSockets to stream incoming model tokens as they generate, producing a dynamic typing response[cite: 1].
+
+## 2. Essential Terminology for AI Architectures
+# 2.1 Context Window
+The maximum token volume an LLM can parse and evaluate in a single request lifecycle[cite: 1].
+
+Scale Reference (1 Million Tokens Capacity):
+
+        ~50,000 lines of standard source code[cite: 1]
+
+        ~8 average-length English novels[cite: 1]
+
+        ~200 podcast episode transcriptions[cite: 1]
+
+        ~9.5 hours of plain audio data[cite: 1]
+
+# 2.2 TokensDefinition: The fundamental computational unit used by an LLM to parse and generate text (typically a fraction of a word)[cite:
+    1].Rule of Thumb: 1 token = English words.Impact: Direct driver of operational API billing and hardware memory consumption (context window)[cite: 1].
+
+# 2.3 Parameters / Weights
+Definition: The underlying numerical coefficients optimized during neural network training[cite: 1].
+
+Scale Implications:
+
+Small (~7B Parameters): Can be executed locally on consumer hardware (e.g., laptops)[cite: 1].
+
+Large (>400B Parameters): Requires distributed datacenter-grade GPU clusters[cite: 1].
+
+# 2.4 Inference & Performance
+Training vs. Inference: Training is the upfront cost of computing weights; inference is the recurring cost paid every time a user executes a query[cite: 1].
+
+Latency vs. Throughput Trade-off:
+
+Interactive Applications (Chatbots): Demand low latency (minimal time to first token)[cite: 1].
+
+Batch Processing Systems: Prioritize high throughput (total documents processed per second) over individual response speed[cite: 1].
+
+## 3. Controlling the Model (The Knobs)Sampling techniques dictate the statistical probabilities when picking subsequent tokens during decoding[cite: 1].
+
+ # 3.1 Temperature – The Creativity ThermostatAdjusts the entropy of the output probability distribution [typically scaled 0.0 to 2.0](cite: 1).
+  Low Values (0.0 - 0.3): Highly deterministic, conservative, and focused[cite: 1].High Values (0.7 - 1.5): More creative, diverse, and unpredictable[cite: 1].
+
+  3.2 Top-k – Restricting the Candidate PoolRestricts token sampling exclusively to the top $k$ most probable candidates[cite: 1].k SettingSearch SpaceBehavior Example ("I like to drink...")Small ($k=5$)Strict & Concentrated{water, coffee, tea, juice, milk}[cite: 1]Large ($k=50$)Broad & Varied{smoothies, cocktails, hot chocolate, kombucha, ...}[cite: 1]3.3 Top-p (Nucleus Sampling) – A Dynamic FilterAccumulates tokens ordered by probability until their cumulative distribution reaches threshold $p$[cite: 1].Dynamic Adaptation: Automatically expands candidate pools for open-ended queries and narrows them for obvious choices[cite: 1].Example:Prompt: "The capital of France is..."With $p=0.9$, the candidate pool collapses overwhelmingly onto "Paris"[cite: 1].3.4 Configuration Summary TableUse Case CategoryTarget TemperatureTarget Top-pPrimary ObjectiveCoding & Technical Q&ALow ($\approx 0.2$)[cite: 1]Moderate ($\approx 0.8$)[cite: 1]Deterministic, correct syntax[cite: 1]Creative Writing & BrainstormingHigh ($\approx 0.8 - 1.0$)High ($\approx 0.95$)Maximum output variation4. Model Selection StrategyChoosing the right foundational model requires balancing hardware constraints, task complexity, and financial budgets[cite: 1].                          ┌────────────────────────┐
+                          │ Model Selection Matrix │
+                          └───────────┬────────────┘
+                                      │
+         ┌────────────────────────────┼────────────────────────────┐
+         ▼                            ▼                            ▼
+┌─────────────────┐          ┌─────────────────┐          ┌─────────────────┐
+│ Parameter Size  │          │ Context Window  │          │ Cost/Capability │
+│ (Edge vs Cloud) │          │ (Short vs Long) │          │ (Fast vs Smart) │
+└─────────────────┘          └─────────────────┘          └─────────────────┘
+4.1 Parameter SizeSmall Language Models (SLMs: 1B - 8B):
+      Ideal for edge computing, low-latency applications, and targeted domain-specific tasks.
+      
+      Large Language Models (LLMs: 70B+): Essential for multi-step reasoning, complex chain-of-thought problems, and coding tasks[cite: 1].4.2 Context Window CapacitySelect models with smaller windows for transactional API calls to lower latency.
+      Utilize extended context models (e.g., 1M+ tokens) when performing global document analysis, repository audits, or extensive conversation tracking[cite: 1].4.3 Modality ConsiderationsText-Only: Optimized for pure text generation, classification, and transformation tasks.Multimodal: Supports text, image, audio, and video ingestion natively within the context stream[cite: 1].4.4 Capability & Pricing Trade-offsDeploy smaller, cheaper models for routine classification or formatting.Reserve top-tier reasoning engines (e.g., GPT-4 class or Claude 3.5 Sonnet) for high-stakes problem-solving to optimize total system cost per token[cite: 1].5. Prompt Engineering Strategies5.1 Core Architecture of a PromptAn enterprise-grade prompt should separate instructions, context, input data, and output formatting:Markdown[SYSTEM INSTRUCTION]
+Act as an expert software architect. Respond strictly in JSON format.
+
+[CONTEXT]
+The target platform is a serverless Microservices architecture running on AWS.
+
+[USER INPUT]
+Design a scalable message queue strategy for standard order processing.
+
+[OUTPUT FORMAT]
+{
+  "strategy_name": "String",
+  "components": ["List"],
+  "trade_offs": "String"
+}
+5.2 Key Engineering TechniquesZero-Shot Prompting: Requesting output without providing explicit training examples.Few-Shot Prompting: Providing $N$ input/output pairs within the prompt to enforce strict output schemas.Chain-of-Thought (CoT): Instructing the model to "think step-by-step" before producing a final answer, improving logical accuracy on complex tasks.5.3 System vs. User PromptsSystem Prompt: Sets foundational behavior, guardrails, constraints, and operational personas. Holds higher operational priority.User Prompt: Contains runtime input, specific queries, or immediate tasks executed by the end-user[cite: 1]
