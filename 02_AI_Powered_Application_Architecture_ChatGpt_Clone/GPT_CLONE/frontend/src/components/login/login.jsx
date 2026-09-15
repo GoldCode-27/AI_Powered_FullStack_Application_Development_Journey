@@ -8,10 +8,13 @@ export default function Login({ onAuthenticated }) {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  //to handle auto submitting
 const handleSubmit = async (event) => {
   event.preventDefault();
+
   setError("");
   setIsSubmitting(true); 
+  
   try {
     const endpoint = isSignup ? "signup" : "login";
     const response = await axios.post(`/api/auth/${endpoint}`,form);
@@ -21,12 +24,11 @@ const handleSubmit = async (event) => {
       id: response.data.user.id,
       name: response.data.user.name,
       email: response.data.user.email,
-      // password: response.data.user.email,
+      // password: response.data.user.password,
     };
 
     //Store user's token
     localStorage.setItem("authToken", response.data.token);
-    
     //Store user's data
     localStorage.setItem("authUser", JSON.stringify(safeUser));
 
