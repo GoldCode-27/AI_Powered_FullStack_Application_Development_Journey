@@ -25,7 +25,10 @@ const cosineSimilarity = (vecA, vecB) => {
   return dotProduct / (magnitudeA * magnitudeB);
 };
 
+
 async function compareTexts() {
+    try {
+        
   const text1 = 'What is json?';
   const text2 = 'what is javascript object notation?';
   const text3 = 'what is the capital city of Ethiopia?';
@@ -58,6 +61,10 @@ async function compareTexts() {
 
   console.log(`Similarity (Text 1 & Text 2): ${similarity1and2}`);
   console.log(`Similarity (Text 1 & Text 3): ${similarity1and3}`);
+        
+    } catch (error) {
+        console.log("error when fetching", error)
+    }
 }
 
 
