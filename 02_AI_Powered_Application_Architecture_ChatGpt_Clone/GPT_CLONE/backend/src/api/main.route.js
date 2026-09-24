@@ -7,8 +7,16 @@ import authRouter from "./auth/auth.route.js";
 const mainRouter = express.Router();
 
 // Mount the chatRouter on the mainRouter
+
+// /api/chat
+// /api/auth
 mainRouter.use("/chat", chatRouter);
 mainRouter.use("/auth", authRouter);
 
 // Endpoint to create a new chat conversation
 export default mainRouter;
+
+
+//  mainRouter--{
+// -chat
+//-auth{-sign, login

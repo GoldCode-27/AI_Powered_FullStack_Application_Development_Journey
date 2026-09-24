@@ -42,12 +42,13 @@ export const login = async ({ email, password }) => {
     error.status = 401;
     throw error;
   }
-
   return publicUser(user);
 };
 
 export const getUserById = async (userId) => {
-  if (!userId) return null;
+  if (!userId)
+     return null;
+    
   const [rows] = await db.execute(
     "SELECT id, name, email FROM users WHERE id = ? LIMIT 1",
     [userId],

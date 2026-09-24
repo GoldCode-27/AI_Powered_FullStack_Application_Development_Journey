@@ -17,7 +17,7 @@ const startServer = async () => {
     // Test the database connection
     const connection = await db.getConnection();
     console.log("Connected to database");
-
+  
     //releasing the connection back to the pool
     connection.release();
     // Start the server

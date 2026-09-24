@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-
 const jwtSecret = process.env.JWT_SECRET;
 
 export const requireAuth = (req, res, next) => {

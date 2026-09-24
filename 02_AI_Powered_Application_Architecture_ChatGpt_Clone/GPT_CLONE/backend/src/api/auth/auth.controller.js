@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import { login, signup } from "./auth.service.js";
 
+
+// Token generator function
 const createToken = (user) => {
   if (!process.env.JWT_SECRET) {
     const error = new Error("JWT_SECRET is not configured.");
@@ -15,11 +17,13 @@ const createToken = (user) => {
   }
 
   const generatedToken = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: "1h",})
-
+    expiresIn: "1h",
+  })
   return generatedToken;
 };
        
+
+//signup controller function
 export const signupController = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -28,7 +32,7 @@ export const signupController = async (req, res) => {
     return res.status(201).json({
       success: true,
       user,
-      token: createToken(user),
+      // token: createToken(user),
     });
   } catch (error) {
     return res.status(error.status || 500).json({
