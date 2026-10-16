@@ -1,10 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { safeExecute } from "../../../../db/config.js";
-import {
-  BadRequestError,
-  UnauthenticatedError,
-} from "../../../utils/errors/index.js";
+import { BadRequestError, UnauthenticatedError } from "../../../utils/index.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
@@ -120,7 +117,7 @@ export const loginService = async ({ email, password }) => {
       // firstName: user.first_name,
       // lastName: user.last_name,
       // email: user.email,
-      password:user.password_hash
+      // password:user.password_hash
     },
     token,
   };

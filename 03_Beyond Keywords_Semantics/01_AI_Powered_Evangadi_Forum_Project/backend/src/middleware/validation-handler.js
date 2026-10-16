@@ -9,8 +9,6 @@ export const validationErrorHandler = (req, res, next) => {
       status: false,
       eror:errors
       })
-      // const errorMessages = errors.array().map(err => err.msg);
-      // throw new BadRequestError(errorMessages.join('. '));
     }
   next();
 };
