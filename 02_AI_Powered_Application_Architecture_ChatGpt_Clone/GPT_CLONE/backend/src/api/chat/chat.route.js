@@ -17,7 +17,7 @@ import {
 
 //importing the express router
 const chatRouter = express.Router();
-      chatRouter.use(requireAuth);
+      // chatRouter.use(requireAuth);
 
 // Endpoint to create a new chat conversation
 

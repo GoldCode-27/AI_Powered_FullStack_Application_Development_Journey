@@ -5,7 +5,7 @@ import authRouter from "./auth/auth.route.js";
 
 //importing the express router
 const mainRouter = express.Router();
-
+ 
 // Mount the chatRouter on the mainRouter
 
 // /api/chat
